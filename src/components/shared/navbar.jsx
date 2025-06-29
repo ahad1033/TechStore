@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "sonner";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,6 +19,8 @@ import {
 import { Button } from "../ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
+import useBoolean from "@/hooks/use-boolean";
 
 import { ThemeToggle } from "../theme/theme-toggle";
 import { logout, useCurrentUser } from "@/store/slices/authSlice";
@@ -82,16 +85,27 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
-  const currentUser = useSelector(useCurrentUser)?.user;
+  const logoutLoading = useBoolean();
 
-  console.log("currentUser: ", currentUser);
+  const currentUser = useSelector(useCurrentUser)?.user;
 
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    logoutLoading.onTrue();
 
-    navigate("/login");
+    try {
+      await dispatch(logout());
+
+      toast.success("Logged out successfully!");
+
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Could not log out. Try again.");
+    } finally {
+      logoutLoading.onFalse();
+    }
   };
 
   return (
@@ -115,17 +129,18 @@ const Navbar = () => {
             {!currentUser ? (
               <Link
                 to="/login"
-                className="flex items-center space-x-1 hover:text-primary"
+                className="flex items-center space-x-1 text-foreground hover:text-background"
               >
                 <User className="w-4 h-4" />
                 <span>Sign In</span>
               </Link>
             ) : (
               <Button
-                variant="destructiveOutline"
                 size="sm"
-                className=""
+                variant="destructiveOutline"
                 onClick={handleLogout}
+                disabled={logoutLoading.value}
+                className="font-semibold"
               >
                 Logout
               </Button>
@@ -133,7 +148,7 @@ const Navbar = () => {
 
             <Link
               to="/wishlist"
-              className="flex items-center space-x-1 hover:text-primary"
+              className="flex text-white hover:text-black items-center space-x-1"
             >
               <Heart className="w-4 h-4" />
               <span>Wishlist</span>
@@ -186,7 +201,7 @@ const Navbar = () => {
                           <li key={item.name}>
                             <Link
                               to={item.path}
-                              className="text-sm hover:text-primary"
+                              className="text-sm text-foreground bg-background dark:text-foreground hover:text-primary dark:hover:text-primary"
                             >
                               {item.name}
                             </Link>
@@ -205,12 +220,12 @@ const Navbar = () => {
 
               <Link
                 to="/cart"
-                className="relative flex items-center hover:text-primary"
+                className="relative flex items-center text-whire hover:text-black"
               >
                 <ShoppingCart className="w-5 h-5" />
                 <Badge
                   variant="destructive"
-                  className="absolute -top-2 -right-2 h-5 w-5 text-xs flex items-center justify-center"
+                  className="absolute -top-3 -right-3 h-5 w-5 text-sm flex items-center justify-center"
                 >
                   3
                 </Badge>
@@ -239,7 +254,7 @@ const Navbar = () => {
 
                       <Link
                         to="/wishlist"
-                        className="flex items-center space-x-2"
+                        className="flex items-center space-x-2 text-white hover:text-black"
                       >
                         <Heart className="w-4 h-4" />
                         <span>Wishlist</span>

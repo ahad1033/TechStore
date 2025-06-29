@@ -11,7 +11,7 @@ export const wishlistApi = api.injectEndpoints({
     }),
 
     signUp: builder.mutation({
-      query: ({ userData }) => ({
+      query: (userData) => ({
         url: `/auth/signup`,
         method: "POST",
         body: userData,

@@ -9,6 +9,7 @@ import { routes } from "./routes/index.jsx";
 import { PersistGate } from "redux-persist/integration/react";
 import { ThemeProvider } from "./components/theme/theme-provider";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Toaster } from "./components/ui/sonner";
 
 const router = createBrowserRouter(routes);
 
@@ -18,6 +19,7 @@ createRoot(document.getElementById("root")).render(
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider defaultTheme="dark" storageKey="techstore-theme">
           <RouterProvider router={router} />
+          <Toaster position="top-right" />
         </ThemeProvider>
       </PersistGate>
     </Provider>

@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 
-import { Card } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 
@@ -73,25 +72,18 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="container section-padding flex items-center justify-center">
+      <div className="max-w-2xl w-full space-y-6">
         {/* Header */}
         <div className="text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">
-                T
-              </span>
-            </div>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl lg:text-4xl text-foreground font-bold mb-2">
             Welcome back
           </h2>
           <p className="text-gray-600">Sign in to your TechStore account</p>
         </div>
 
         {/* Login Form */}
-        <Card className="p-8">
+        <div className="p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Email Field */}
             <div>
@@ -184,7 +176,7 @@ const LoginPage = () => {
           </form>
 
           {/* Divider */}
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
@@ -195,10 +187,10 @@ const LoginPage = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Social Login Buttons */}
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          {/* <div className="mt-6 grid grid-cols-2 gap-3">
             <Button variant="outline" className="w-full">
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
@@ -230,7 +222,7 @@ const LoginPage = () => {
               </svg>
               Facebook
             </Button>
-          </div>
+          </div> */}
 
           {/* Sign Up Link */}
           <div className="mt-6 text-center">
@@ -244,10 +236,10 @@ const LoginPage = () => {
               </Link>
             </p>
           </div>
-        </Card>
+        </div>
 
         {/* Footer */}
-        <div className="text-center">
+        {/* <div className="text-center">
           <p className="text-xs text-gray-500">
             By signing in, you agree to our{" "}
             <Link to="/terms" className="text-primary hover:underline">
@@ -258,7 +250,7 @@ const LoginPage = () => {
               Privacy Policy
             </Link>
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

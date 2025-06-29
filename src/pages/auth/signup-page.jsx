@@ -1,20 +1,27 @@
 import * as yup from "yup";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Mail, Lock, Eye, EyeOff, User, ArrowRight, Check } from "lucide-react";
 
-import { Card } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
+import { useSignUpMutation } from "@/store/slices/authApi";
+import { toast } from "sonner";
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const schema = yup
+  const [signUp] = useSignUpMutation();
+
+  const SignupSchema = yup
     .object({
       name: yup
         .string()
@@ -24,6 +31,13 @@ const SignupPage = () => {
         .string()
         .min(2, "Address must be at least 2 characters")
         .required("Address is required"),
+      phone: yup
+        .string()
+        .matches(
+          /^(013|014|015|016|017|018|019)\d{8}$/,
+          "Please enter a valid Bangladeshi phone number (11 digits)"
+        )
+        .required("Phone number is required"),
       email: yup
         .string()
         .email("Please enter a valid email address")
@@ -49,31 +63,54 @@ const SignupPage = () => {
         .string()
         .oneOf([yup.ref("password"), null], "Passwords must match")
         .required("Please confirm your password"),
-      // agreeToTerms: yup
-      //   .boolean()
-      //   .oneOf([true], "You must agree to the terms and conditions"),
     })
     .required();
 
   const {
+    watch,
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(SignupSchema),
+    defaultValues: {
+      name: "",
+      address: "",
+      phone: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
+
+  console.log(errors);
 
   const password = watch("password");
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log("Signup attempt:", data);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    setIsSubmitting(false);
+      // eslint-disable-next-line no-unused-vars
+      const { confirmPassword, ...rest } = data;
+
+      const res = await signUp(rest).unwrap();
+
+      console.log("api response: ", res);
+
+      if (res.success) {
+        toast.success(res.message || "Signed up successfully");
+
+        navigate("/", { replace: true });
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast.error(error?.data?.message || "Signup failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const passwordRequirements = [
@@ -88,19 +125,12 @@ const SignupPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="bg-background flex items-center justify-center pt-8 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl w-full space-y-6">
         {/* Header */}
         <div className="text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">
-                T
-              </span>
-            </div>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Create your account
+          <h2 className="text-3xl lg:text-4xl text-foreground font-bold mb-2">
+            Register
           </h2>
           <p className="text-gray-600">
             Join TechStore and start shopping today
@@ -108,45 +138,58 @@ const SignupPage = () => {
         </div>
 
         {/* Signup Form */}
-        <Card className="p-8">
+        <div className="p-4">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Name Fields */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  First Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <Input
-                    {...register("firstName")}
-                    placeholder="John"
-                    className={`pl-10 ${
-                      errors.firstName ? "border-red-500" : ""
-                    }`}
-                  />
-                </div>
-                {errors.firstName && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.firstName.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Last Name
-                </label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Name
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
-                  {...register("lastName")}
-                  placeholder="Doe"
-                  className={errors.lastName ? "border-red-500" : ""}
+                  {...register("name")}
+                  placeholder="Enter your full name"
+                  className={`pl-10 ${errors.name ? "border-red-500" : ""}`}
                 />
-                {errors.lastName && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.lastName.message}
-                  </p>
-                )}
               </div>
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Address
+              </label>
+              <Input
+                {...register("address")}
+                placeholder="Doe"
+                className={errors.address ? "border-red-500" : ""}
+              />
+              {errors.address && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.address.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Phone
+              </label>
+              <Input
+                {...register("phone")}
+                placeholder="01636******"
+                className={errors.phone ? "border-red-500" : ""}
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.phone.message}
+                </p>
+              )}
             </div>
 
             {/* Email Field */}
@@ -266,7 +309,7 @@ const SignupPage = () => {
             </div>
 
             {/* Terms and Conditions */}
-            <div>
+            {/* <div>
               <label className="flex items-start">
                 <input
                   type="checkbox"
@@ -289,7 +332,7 @@ const SignupPage = () => {
                   {errors.agreeToTerms.message}
                 </p>
               )}
-            </div>
+            </div> */}
 
             {/* Submit Button */}
             <Button
@@ -310,7 +353,7 @@ const SignupPage = () => {
           </form>
 
           {/* Divider */}
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
@@ -321,10 +364,10 @@ const SignupPage = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Social Signup Buttons */}
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          {/* <div className="mt-6 grid grid-cols-2 gap-3">
             <Button variant="outline" className="w-full">
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
@@ -356,7 +399,7 @@ const SignupPage = () => {
               </svg>
               Facebook
             </Button>
-          </div>
+          </div> */}
 
           {/* Sign In Link */}
           <div className="mt-6 text-center">
@@ -370,10 +413,10 @@ const SignupPage = () => {
               </Link>
             </p>
           </div>
-        </Card>
+        </div>
 
         {/* Footer */}
-        <div className="text-center">
+        {/* <div className="text-center">
           <p className="text-xs text-gray-500">
             By creating an account, you agree to our{" "}
             <Link to="/terms" className="text-primary hover:underline">
@@ -384,7 +427,7 @@ const SignupPage = () => {
               Privacy Policy
             </Link>
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
