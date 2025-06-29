@@ -1,9 +1,11 @@
 import {
   HeroSection,
-  ProductCategories,
-  FeaturedProducts,
+  StatSection,
   Testimonials,
+  ServicesSection,
+  FeaturedProducts,
   NewsletterSignup,
+  ProductCategories,
 } from "@/components/sections";
 
 const HomePage = () => {
@@ -13,7 +15,9 @@ const HomePage = () => {
       <ProductCategories />
       <FeaturedProducts />
       <Testimonials />
+      <StatSection />
       <NewsletterSignup />
+      <ServicesSection />
     </>
   );
 };

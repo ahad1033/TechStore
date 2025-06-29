@@ -50,11 +50,11 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
+    <section className="relative bg-gradient-to-br from-blue-500 via-white to-purple-500 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+      <div className="container section-padding">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
@@ -71,7 +71,7 @@ const HeroSection = () => {
             <div className="space-y-4">
               <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
                 Discover the Latest
-                <span className="text-primary block">Tech Innovations</span>
+                <span className="block">Tech Innovations</span>
               </h1>
               <p className="text-xl text-gray-600 max-w-lg">
                 Explore our curated collection of premium electronics, audio
@@ -125,7 +125,7 @@ const HeroSection = () => {
                   />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">
+                  <h3 className="font-semibold text-lg text-black">
                     {featuredProducts[0].name}
                   </h3>
                   <div className="flex items-center space-x-2 mt-1">
@@ -154,10 +154,6 @@ const HeroSection = () => {
                     </span>
                   </div>
                 </div>
-                <Button className="w-full">
-                  <ShoppingCart className="mr-2 w-4 h-4" />
-                  Add to Cart
-                </Button>
               </div>
             </div>
 
@@ -172,7 +168,7 @@ const HeroSection = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="font-medium text-sm">
+                  <h4 className="font-medium text-sm text-black">
                     {featuredProducts[1].name}
                   </h4>
                   <div className="flex items-center space-x-1">
@@ -195,7 +191,7 @@ const HeroSection = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="font-medium text-sm">
+                  <h4 className="font-medium text-black text-sm">
                     {featuredProducts[2].name}
                   </h4>
                   <div className="flex items-center space-x-1">
@@ -222,10 +218,9 @@ const HeroSection = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Wave */}
-      <div className="absolute bottom-0 left-0 right-0">
+        {/* Bottom Wave */}
+        {/* <div className="absolute bottom-0 left-0 right-0">
         <svg
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
@@ -246,6 +241,7 @@ const HeroSection = () => {
             className="fill-current text-white"
           ></path>
         </svg>
+      </div> */}
       </div>
     </section>
   );

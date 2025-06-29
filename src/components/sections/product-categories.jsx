@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import {
@@ -98,14 +99,14 @@ const ProductCategories = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="">
+      <div className="container section-padding">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             Shop by Category
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Discover our wide range of technology products organized by
             category. Find exactly what you're looking for with our curated
             collections.
@@ -113,23 +114,24 @@ const ProductCategories = () => {
         </div>
 
         {/* Categories Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category) => (
             <Link
               key={category.id}
               to={`/products?category=${category.name.toLowerCase()}`}
               className="group"
             >
-              <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+              <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 py-0">
                 {/* Category Image */}
                 <div className="relative h-48 overflow-hidden">
                   <img
                     src={category.image}
                     alt={category.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+
+                  {/* Overlay with smooth transition */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300 opacity-100 group-hover:opacity-90"></div>
 
                   {/* Icon */}
                   <div
@@ -142,11 +144,18 @@ const ProductCategories = () => {
                   <Badge className="absolute top-4 right-4 bg-white/90 text-gray-900 hover:bg-white">
                     {category.productCount} items
                   </Badge>
+
+                  {/* Mobile Title Overlay */}
+                  <div className="absolute bottom-3 left-3 right-3 lg:hidden">
+                    <div className="bg-white/80 text-black px-3 py-1 text-sm rounded font-medium text-center shadow">
+                      {category.name}
+                    </div>
+                  </div>
                 </div>
 
-                {/* Category Info */}
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors duration-200">
+                {/* Category Info - Hidden on Mobile */}
+                <div className="p-6 hidden lg:block">
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors duration-200">
                     {category.name}
                   </h3>
                   <p className="text-gray-600 text-sm mb-4">
@@ -174,29 +183,6 @@ const ProductCategories = () => {
               </Card>
             </Link>
           ))}
-        </div>
-
-        {/* View All Categories Button */}
-        <div className="text-center mt-12">
-          <Link
-            to="/products"
-            className="inline-flex items-center px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors duration-200"
-          >
-            View All Categories
-            <svg
-              className="w-5 h-5 ml-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </Link>
         </div>
       </div>
     </section>

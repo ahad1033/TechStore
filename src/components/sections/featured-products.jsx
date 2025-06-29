@@ -119,6 +119,62 @@ const FeaturedProducts = () => {
       isNew: true,
       isFeatured: true,
     },
+    {
+      id: 9,
+      name: "iPhone 15 Pro Max",
+      price: 1199,
+      originalPrice: 1399,
+      image:
+        "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop",
+      category: "Smartphones",
+      rating: 4.8,
+      reviews: 1247,
+      discount: 14,
+      isNew: true,
+      isFeatured: true,
+    },
+    {
+      id: 10,
+      name: "Sony WH-1000XM5",
+      price: 349,
+      originalPrice: 399,
+      image:
+        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+      category: "Audio",
+      rating: 4.9,
+      reviews: 892,
+      discount: 12,
+      isNew: false,
+      isFeatured: true,
+    },
+    {
+      id: 11,
+      name: "MacBook Air M2",
+      price: 1199,
+      originalPrice: 1299,
+      image:
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop",
+      category: "Laptops",
+      rating: 4.7,
+      reviews: 567,
+      discount: 8,
+      isNew: false,
+      isFeatured: true,
+    },
+    {
+      id: 12,
+      name: "Samsung Galaxy S24 Ultra",
+      price: 1299,
+      originalPrice: 1499,
+      image:
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop",
+      category: "Smartphones",
+      rating: 4.6,
+      reviews: 743,
+      discount: 13,
+      isNew: true,
+      isFeatured: true,
+    },
   ];
 
   const handleAddToCart = (productId) => {
@@ -132,28 +188,28 @@ const FeaturedProducts = () => {
   };
 
   return (
-    <section className="py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="container section-padding">
+      <div>
         {/* Section Header */}
         <div className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4">
+          <Badge variant="secondary" className="mb-4 px-2 py-1">
             Featured Collection
           </Badge>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             Featured Products
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Discover our handpicked selection of premium products that combine
             innovation, quality, and exceptional value.
           </p>
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-6 gap-6">
           {products.map((product) => (
             <Card
               key={product.id}
-              className="group overflow-hidden hover:shadow-xl transition-all duration-300"
+              className="group overflow-hidden hover:shadow-xl transition-all duration-300 pt-0"
             >
               {/* Product Image */}
               <div className="relative aspect-square overflow-hidden">
@@ -193,7 +249,7 @@ const FeaturedProducts = () => {
                 </div>
 
                 {/* Quick Add to Cart */}
-                <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <div className="absolute bottom-0 left-0 right-0 bg-white/20 backdrop-blur-sm p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                   <Button
                     className="w-full"
                     onClick={() => handleAddToCart(product.id)}
@@ -211,13 +267,13 @@ const FeaturedProducts = () => {
 
                 {/* Product Name */}
                 <Link to={`/products/${product.id}`}>
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                  <h3 className="font-semibold  mb-2 group-hover:text-primary transition-colors duration-200 line-clamp-2">
                     {product.name}
                   </h3>
                 </Link>
 
                 {/* Rating */}
-                <div className="flex items-center space-x-2 mb-3">
+                {/* <div className="flex items-center space-x-2 mb-3">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
@@ -233,7 +289,7 @@ const FeaturedProducts = () => {
                   <span className="text-sm text-gray-600">
                     ({product.reviews})
                   </span>
-                </div>
+                </div> */}
 
                 {/* Price */}
                 <div className="flex items-center space-x-2">
@@ -253,12 +309,11 @@ const FeaturedProducts = () => {
 
         {/* View All Products Button */}
         <div className="text-center mt-12">
-          <Link
-            to="/products"
-            className="inline-flex items-center px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors duration-200"
-          >
-            View All Products
-            <ArrowRight className="w-5 h-5 ml-2" />
+          <Link to="/products">
+            <Button size="lg">
+              View All Products
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
           </Link>
         </div>
       </div>

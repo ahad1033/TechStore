@@ -7,7 +7,6 @@ import { Mail, Gift, Shield, ArrowRight, CheckCircle } from "lucide-react";
 const NewsletterSignup = () => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +16,6 @@ const NewsletterSignup = () => {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log("Newsletter signup:", email);
-    setIsSubmitted(true);
     setEmail("");
     setIsSubmitting(false);
   };
@@ -35,33 +33,11 @@ const NewsletterSignup = () => {
     },
   ];
 
-  if (isSubmitted) {
-    return (
-      <section className="py-16 bg-gradient-to-r from-primary to-primary/80 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-6">
-            <CheckCircle className="w-8 h-8" />
-          </div>
-          <h2 className="text-3xl font-bold mb-4">Welcome to TechStore!</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Thank you for subscribing to our newsletter. You'll receive your
-            first email shortly.
-          </p>
-          <Button
-            variant="secondary"
-            onClick={() => setIsSubmitted(false)}
-            className="bg-white text-primary hover:bg-gray-100"
-          >
-            Subscribe Another Email
-          </Button>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section className="py-16 bg-gradient-to-r from-primary to-primary/80 text-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+    // className="bg-gradient-to-br from-blue-200 via-white to-purple-200"
+    >
+      <div className="container section-padding">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-6">

@@ -8,11 +8,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  ArrowRight,
-  CreditCard,
-  Truck,
-  Shield,
-  RefreshCw,
 } from "lucide-react";
 
 const Footer = () => {
@@ -53,52 +48,9 @@ const Footer = () => {
     { icon: <Linkedin className="w-5 h-5" />, href: "#", label: "LinkedIn" },
   ];
 
-  const features = [
-    {
-      icon: <Truck className="w-5 h-5" />,
-      title: "Free Shipping",
-      description: "On orders over $50",
-    },
-    {
-      icon: <RefreshCw className="w-5 h-5" />,
-      title: "Easy Returns",
-      description: "30 day return policy",
-    },
-    {
-      icon: <Shield className="w-5 h-5" />,
-      title: "Secure Payment",
-      description: "100% secure checkout",
-    },
-    {
-      icon: <CreditCard className="w-5 h-5" />,
-      title: "Flexible Payment",
-      description: "Multiple payment options",
-    },
-  ];
-
   return (
     <footer className="bg-gray-900 text-white">
-      {/* Features Section */}
-      <div className="border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-center space-x-3">
-                <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-white">
-                  {feature.icon}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm">{feature.title}</h3>
-                  <p className="text-gray-400 text-xs">{feature.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="container footer-padding">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-2">
@@ -121,12 +73,12 @@ const Footer = () => {
               <div className="flex items-center space-x-3 text-gray-400">
                 <MapPin className="w-4 h-4" />
                 <span className="text-sm">
-                  123 Tech Street, Digital City, DC 12345
+                  365 Mobarokshah Road, Narayanganj
                 </span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <Phone className="w-4 h-4" />
-                <span className="text-sm">+1 (555) 123-4567</span>
+                <span className="text-sm">01636428995</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <Mail className="w-4 h-4" />
@@ -209,7 +161,7 @@ const Footer = () => {
         </div> */}
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-800 mt-8 pt-8">
+        <div className="border-t border-gray-800 mt-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-gray-400 text-sm">
               © {currentYear} TechStore. All rights reserved.

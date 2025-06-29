@@ -74,17 +74,19 @@ const Testimonials = () => {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+    // className="bg-gradient-to-br from-blue-600 via-white to-purple-600"
+    >
+      <div className="container section-padding">
         {/* Section Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
             <Quote className="w-8 h-8 text-primary" />
           </div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             What Our Customers Say
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Don't just take our word for it. Here's what our satisfied customers
             have to say about their TechStore experience.
           </p>
@@ -99,7 +101,7 @@ const Testimonials = () => {
             >
               {/* Quote Icon */}
               <div className="mb-4">
-                <Quote className="w-8 h-8 text-primary/30" />
+                <Quote className="w-8 h-8 text-primary/80" />
               </div>
 
               {/* Rating */}
@@ -117,7 +119,7 @@ const Testimonials = () => {
               </div>
 
               {/* Content */}
-              <p className="text-gray-700 mb-6 leading-relaxed">
+              <p className="text-muted-foreground mb-6 leading-relaxed">
                 "{testimonial.content}"
               </p>
 
@@ -144,34 +146,12 @@ const Testimonials = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h4 className="font-semibold text-gray-900">
-                    {testimonial.name}
-                  </h4>
+                  <h4 className="font-semibold">{testimonial.name}</h4>
                   <p className="text-sm text-gray-600">{testimonial.role}</p>
                 </div>
               </div>
             </Card>
           ))}
-        </div>
-
-        {/* Stats */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-          <div>
-            <div className="text-3xl font-bold text-primary mb-2">50K+</div>
-            <div className="text-gray-600">Happy Customers</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-primary mb-2">4.9/5</div>
-            <div className="text-gray-600">Average Rating</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-primary mb-2">98%</div>
-            <div className="text-gray-600">Satisfaction Rate</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-primary mb-2">24/7</div>
-            <div className="text-gray-600">Customer Support</div>
-          </div>
         </div>
       </div>
     </section>
