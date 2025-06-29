@@ -1,28 +1,29 @@
-import React from "react";
+import * as yup from "yup";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Card } from "../../components/ui/card";
 import { Mail, Lock, Eye, EyeOff, User, ArrowRight, Check } from "lucide-react";
 
+import { Card } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+
 const SignupPage = () => {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const schema = yup
     .object({
-      firstName: yup
+      name: yup
         .string()
         .min(2, "First name must be at least 2 characters")
         .required("First name is required"),
-      lastName: yup
+      address: yup
         .string()
-        .min(2, "Last name must be at least 2 characters")
-        .required("Last name is required"),
+        .min(2, "Address must be at least 2 characters")
+        .required("Address is required"),
       email: yup
         .string()
         .email("Please enter a valid email address")
@@ -48,9 +49,9 @@ const SignupPage = () => {
         .string()
         .oneOf([yup.ref("password"), null], "Passwords must match")
         .required("Please confirm your password"),
-      agreeToTerms: yup
-        .boolean()
-        .oneOf([true], "You must agree to the terms and conditions"),
+      // agreeToTerms: yup
+      //   .boolean()
+      //   .oneOf([true], "You must agree to the terms and conditions"),
     })
     .required();
 
@@ -69,7 +70,9 @@ const SignupPage = () => {
     setIsSubmitting(true);
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
+
     console.log("Signup attempt:", data);
+
     setIsSubmitting(false);
   };
 

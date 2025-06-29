@@ -1,0 +1,39 @@
+import { api } from "../services/api";
+
+export const ordersApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    getOrders: builder.query({
+      query: ({ page = 1, limit = 10, status, userId }) => ({
+        url: "/orders",
+        params: { page, limit, status, userId },
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ id }) => ({ type: "Order", id })),
+              { type: "Order", id: "LIST" },
+            ]
+          : [{ type: "Order", id: "LIST" }],
+    }),
+
+    getOrder: builder.query({
+      query: (id) => `/orders/${id}`,
+      providesTags: (result, error, id) => [{ type: "Order", id }],
+    }),
+
+    updateOrder: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/orders/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Order", id },
+        { type: "Order", id: "LIST" },
+      ],
+    }),
+  }),
+});
+
+export const { useGetOrdersQuery, useGetOrderQuery, useUpdateOrderMutation } =
+  ordersApi;

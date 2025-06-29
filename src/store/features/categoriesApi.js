@@ -1,0 +1,61 @@
+import { api } from "../services/api";
+
+export const categoriesApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    getCategories: builder.query({
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: "/categories",
+        params: { page, limit, search },
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ id }) => ({ type: "Category", id })),
+              { type: "Category", id: "LIST" },
+            ]
+          : [{ type: "Category", id: "LIST" }],
+    }),
+
+    getCategory: builder.query({
+      query: (id) => `/categories/${id}`,
+      providesTags: (result, error, id) => [{ type: "Category", id }],
+    }),
+
+    createCategory: builder.mutation({
+      query: (data) => ({
+        url: "/categories",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: [{ type: "Category", id: "LIST" }],
+    }),
+
+    updateCategory: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/categories/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Category", id },
+        { type: "Category", id: "LIST" },
+      ],
+    }),
+
+    deleteCategory: builder.mutation({
+      query: (id) => ({
+        url: `/categories/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "Category", id: "LIST" }],
+    }),
+  }),
+});
+
+export const {
+  useGetCategoriesQuery,
+  useGetCategoryQuery,
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+} = categoriesApi;

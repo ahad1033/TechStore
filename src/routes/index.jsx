@@ -1,13 +1,18 @@
-import MainLayout from "@/components/layouts/main-layout.jsx";
 import {
   CartPage,
-  ContactPage,
   HomePage,
   LoginPage,
-  ProductDetailPage,
-  ProductsPage,
   SignupPage,
+  ContactPage,
+  ProductsPage,
+  ProductDetailPage,
 } from "@/pages";
+import { DashboardLayout } from "@/components/layouts";
+
+import AnalyticsPage from "@/pages/dashboard/analytics-page";
+import MainLayout from "@/components/layouts/main-layout.jsx";
+import CategoriesPage from "@/pages/dashboard/categories-page";
+import SubcategoriesPage from "@/pages/dashboard/subcategories-page";
 
 export const routes = [
   {
@@ -44,16 +49,23 @@ export const routes = [
       },
     ],
   },
-  // Future dashboard routes (commented out for now)
-  // {
-  //   path: "/dashboard",
-  //   element: <DashboardLayout />,
-  //   children: [
-  //     {
-  //       index: true,
-  //       element: <DashboardHome />,
-  //     },
-  //     // Add more dashboard routes here
-  //   ],
-  // },
+
+  {
+    path: "/dashboard",
+    element: <DashboardLayout />,
+    children: [
+      {
+        index: true,
+        element: <AnalyticsPage />,
+      },
+      {
+        path: "categories",
+        element: <CategoriesPage />,
+      },
+      {
+        path: "subcategories",
+        element: <SubcategoriesPage />,
+      },
+    ],
+  },
 ];

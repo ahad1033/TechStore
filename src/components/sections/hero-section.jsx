@@ -50,7 +50,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="relative bg-gradient-to-br from-blue-500 via-white to-purple-500 overflow-hidden">
+    <section className="relative bg-gradient-to-tl from-primary via-white to-secondary/100 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
@@ -61,7 +61,7 @@ const HeroSection = () => {
             {/* Badge */}
             <Badge
               variant="secondary"
-              className="inline-flex items-center space-x-2 px-4 py-2"
+              className="inline-flex items-center space-x-2 px-4 py-2 border border-primary rounded-full"
             >
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
               <span>New Arrivals - Up to 40% Off</span>

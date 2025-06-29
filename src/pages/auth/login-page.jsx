@@ -1,16 +1,31 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+
 import { Card } from "../../components/ui/card";
-import { Mail, Lock, Eye, EyeOff, User, ArrowRight } from "lucide-react";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+
+import { verifyToken } from "@/utils/verify-token";
+import { setUser } from "@/store/slices/authSlice";
+import { useLoginMutation } from "@/store/slices/authApi";
+
+// ----------------------------------------------------------------------
 
 const LoginPage = () => {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
+  const [login, { _isLoading }] = useLoginMutation();
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const schema = yup
     .object({
@@ -26,21 +41,35 @@ const LoginPage = () => {
     .required();
 
   const {
+    reset,
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
+
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Login attempt:", data);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const response = await login(data).unwrap();
+
+    if (response.success) {
+      const user = await verifyToken(response?.data?.accessToken);
+
+      dispatch(setUser({ user, token: response?.data?.accessToken }));
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      navigate("/", { replace: true });
+
+      reset();
+    }
+
     setIsSubmitting(false);
-    reset();
   };
 
   return (
@@ -120,7 +149,7 @@ const LoginPage = () => {
             </div>
 
             {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <label className="flex items-center">
                 <input
                   type="checkbox"
@@ -134,7 +163,7 @@ const LoginPage = () => {
               >
                 Forgot password?
               </Link>
-            </div>
+            </div> */}
 
             {/* Submit Button */}
             <Button

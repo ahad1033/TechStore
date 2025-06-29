@@ -1,22 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  ShoppingCart,
-  Search,
   Menu,
   User,
   Heart,
+  Camera,
+  Search,
+  Grid2X2,
+  Gamepad2,
   Smartphone,
   Headphones,
-  Camera,
-  Gamepad2,
-  Grid2X2,
+  ShoppingCart,
 } from "lucide-react";
+import { Button } from "../ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
 import { ThemeToggle } from "../theme/theme-toggle";
+import { logout, useCurrentUser } from "@/store/slices/authSlice";
 
 const navigationLinks = [
   { name: "Home", path: "/" },
@@ -71,20 +75,36 @@ const megaMenuCategories = [
   },
 ];
 
+// ----------------------------------------------------------------------
+
 const Navbar = () => {
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
+  const currentUser = useSelector(useCurrentUser)?.user;
+
+  console.log("currentUser: ", currentUser);
+
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
 
+  const handleLogout = () => {
+    dispatch(logout());
+
+    navigate("/login");
+  };
+
   return (
-    <nav className="sticky bg-foreground dark:bg-background text-background dark:text-foreground top-0 z-50 w-full">
+    <nav className="sticky bg-primary text-background dark:text-foreground top-0 z-50 w-full">
       <div className="container">
         {/* Top Nav */}
-        <div className="hidden lg:w-full lg:flex justify-between items-center h-10 text-sm">
+        <div className="hidden lg:w-full lg:flex justify-between items-center h-10 text-base">
           <div>
             {navigationLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
-                className="hover:text-primary mr-12"
+                className="hover:text-black mr-12"
               >
                 {link.name}
               </Link>
@@ -92,13 +112,24 @@ const Navbar = () => {
           </div>
 
           <div className="flex gap-8">
-            <Link
-              to="/login"
-              className="flex items-center space-x-1 hover:text-primary"
-            >
-              <User className="w-4 h-4" />
-              <span>Sign In</span>
-            </Link>
+            {!currentUser ? (
+              <Link
+                to="/login"
+                className="flex items-center space-x-1 hover:text-primary"
+              >
+                <User className="w-4 h-4" />
+                <span>Sign In</span>
+              </Link>
+            ) : (
+              <Button
+                variant="destructiveOutline"
+                size="sm"
+                className=""
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            )}
 
             <Link
               to="/wishlist"
@@ -127,7 +158,7 @@ const Navbar = () => {
             >
               <button
                 onMouseEnter={() => setActiveMegaMenu("categories")}
-                className="flex items-center space-x-1 hover:text-primary font-semibold text-xl"
+                className="flex items-center space-x-1 hover:text-black font-semibold text-xl"
               >
                 <Grid2X2 className="w-5 h-5" />
                 <span className="">Categories</span>
@@ -205,6 +236,7 @@ const Navbar = () => {
                         <User className="w-4 h-4" />
                         <span>Sign In</span>
                       </Link>
+
                       <Link
                         to="/wishlist"
                         className="flex items-center space-x-2"
