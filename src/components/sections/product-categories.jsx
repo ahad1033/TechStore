@@ -49,7 +49,7 @@ const ProductCategories = () => {
                   to={`/products?category=${category.name.toLowerCase()}`}
                   className="group"
                 >
-                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 py-0">
+                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 py-0 dark:bg-background/10 border-black/10 dark:border-white/5">
                     {/* Category Image */}
                     <div className="relative h-48 overflow-hidden">
                       <img

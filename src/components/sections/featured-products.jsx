@@ -51,7 +51,7 @@ const FeaturedProducts = () => {
             : products?.data?.map((product) => (
                 <Card
                   key={product.id}
-                  className="group overflow-hidden hover:shadow-xl transition-all duration-300 pt-0 pb-2"
+                  className="group overflow-hidden hover:shadow-lg transition-all duration-300 pt-0 pb-2 dark:bg-background/10 border-black/10 dark:border-white/5"
                 >
                   {/* Product Image */}
                   <div className="relative aspect-square overflow-hidden">
