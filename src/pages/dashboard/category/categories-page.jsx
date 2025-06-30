@@ -1,33 +1,34 @@
-import React, { useState } from "react";
-import * as yup from "yup";
-import { Button } from "@/components/ui/button";
-import DataTable from "@/components/ui/data-table";
-import FormModal from "@/components/ui/form-modal";
-import {
-  useGetCategoriesQuery,
-  useCreateCategoryMutation,
-  useUpdateCategoryMutation,
-  useDeleteCategoryMutation,
-} from "@/store/features/categoriesApi";
+import { toast } from "sonner";
+import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
-const categorySchema = yup.object({
-  name: yup
-    .string()
-    .required("Name is required")
-    .min(2, "Name must be at least 2 characters"),
-  description: yup.string().required("Description is required"),
-  status: yup.string().required("Status is required"),
-});
+import { Button } from "@/components/ui/button";
+import DataTable from "@/components/ui/data-table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+import {
+  useGetCategoriesQuery,
+  useDeleteCategoryMutation,
+} from "@/store/features/categoriesApi";
+import LoadingButton from "@/components/shared/loading-button";
 
 export default function CategoriesPage() {
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [editingCategory, setEditingCategory] = useState(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
   const { data: categoriesData, isLoading } = useGetCategoriesQuery({
     page,
@@ -37,41 +38,35 @@ export default function CategoriesPage() {
 
   console.log("categoriesData: ", categoriesData);
 
-  const [createCategory, { isLoading: creating }] = useCreateCategoryMutation();
-  const [updateCategory, { isLoading: updating }] = useUpdateCategoryMutation();
   const [deleteCategory, { isLoading: deleting }] = useDeleteCategoryMutation();
 
-  const handleCreateCategory = async (data) => {
-    try {
-      await createCategory(data).unwrap();
-      setIsCreateModalOpen(false);
-    } catch (error) {
-      console.error("Failed to create category:", error);
-      throw error;
-    }
-  };
-
-  const handleUpdateCategory = async (data) => {
-    try {
-      await updateCategory({ id: editingCategory.id, ...data }).unwrap();
-      setEditingCategory(null);
-    } catch (error) {
-      console.error("Failed to update category:", error);
-      throw error;
-    }
+  // Function to open the confirmation dialog
+  const confirmDeleteCategory = (id) => {
+    setCategoryToDelete(id);
   };
 
   const handleEditCategory = (data) => {
     navigate(`/dashboard/update-category/${data.id}`, { replace: true });
   };
 
-  const handleDeleteCategory = async (id) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
-      try {
-        await deleteCategory(id).unwrap();
-      } catch (error) {
-        console.error("Failed to delete category:", error);
+  const handleDeleteCategory = async () => {
+    if (!categoryToDelete) return;
+
+    toast.info("Wait a moment!");
+
+    try {
+      const res = await deleteCategory(categoryToDelete).unwrap();
+
+      if (res.success) {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        toast.success(res.message || "Category deleted successfully!");
+
+        setCategoryToDelete(null);
       }
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+      toast.error("Failed to delete category. Please try again.");
     }
   };
 
@@ -114,7 +109,7 @@ export default function CategoriesPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleDeleteCategory(row.id)}
+            onClick={() => confirmDeleteCategory(row.id)}
             disabled={deleting}
           >
             <Trash2 className="h-4 w-4" />
@@ -155,151 +150,35 @@ export default function CategoriesPage() {
         searchPlaceholder="Search categories..."
       />
 
-      {/* Create Modal */}
-      {isCreateModalOpen && (
-        <FormModal
-          title="Create Category"
-          description="Add a new category to organize your products"
-          schema={categorySchema}
-          onSubmit={handleCreateCategory}
-          loading={creating}
-          mode="create"
-          trigger={<div style={{ display: "none" }} />}
-        >
-          {({ register, errors }) => (
-            <>
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="Enter category name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p className="text-sm text-red-600">{errors.name.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-medium">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  placeholder="Enter category description"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={3}
-                  {...register("description")}
-                />
-                {errors.description && (
-                  <p className="text-sm text-red-600">
-                    {errors.description.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="status" className="text-sm font-medium">
-                  Status
-                </label>
-                <select
-                  id="status"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("status")}
-                >
-                  <option value="">Select status</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-                {errors.status && (
-                  <p className="text-sm text-red-600">
-                    {errors.status.message}
-                  </p>
-                )}
-              </div>
-            </>
-          )}
-        </FormModal>
-      )}
-
-      {/* Edit Modal */}
-      {editingCategory && (
-        <FormModal
-          title="Edit Category"
-          description="Update category information"
-          schema={categorySchema}
-          defaultValues={editingCategory}
-          onSubmit={handleUpdateCategory}
-          loading={updating}
-          mode="edit"
-          trigger={<div style={{ display: "none" }} />}
-        >
-          {({ register, errors }) => (
-            <>
-              <div className="space-y-2">
-                <label htmlFor="edit-name" className="text-sm font-medium">
-                  Name
-                </label>
-                <input
-                  id="edit-name"
-                  type="text"
-                  placeholder="Enter category name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p className="text-sm text-red-600">{errors.name.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="edit-description"
-                  className="text-sm font-medium"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="edit-description"
-                  placeholder="Enter category description"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={3}
-                  {...register("description")}
-                />
-                {errors.description && (
-                  <p className="text-sm text-red-600">
-                    {errors.description.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="edit-status" className="text-sm font-medium">
-                  Status
-                </label>
-                <select
-                  id="edit-status"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("status")}
-                >
-                  <option value="">Select status</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-                {errors.status && (
-                  <p className="text-sm text-red-600">
-                    {errors.status.message}
-                  </p>
-                )}
-              </div>
-            </>
-          )}
-        </FormModal>
-      )}
+      {/* AlertDialog for Delete Confirmation */}
+      <AlertDialog
+        open={Boolean(categoryToDelete)}
+        onOpenChange={(open) => !open && setCategoryToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              selected category.
+              <br />
+              <span className="font-bold text-red-600">
+                Warning: If this category has any subcategories, they will also
+                be permanently deleted.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteCategory}
+              disabled={deleting}
+            >
+              {deleting ? <LoadingButton /> : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

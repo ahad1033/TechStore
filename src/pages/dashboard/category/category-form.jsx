@@ -185,7 +185,9 @@ const CategoryForm = () => {
 
       if (result.success) {
         toast.success(result.message || "Category saved successfully!");
+
         await new Promise((resolve) => setTimeout(resolve, 300));
+        
         navigate("/dashboard/categories", { replace: true });
       } else {
         toast.error(result.message || "Failed to save category.");
