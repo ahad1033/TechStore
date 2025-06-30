@@ -9,6 +9,8 @@ import {
 } from "@/pages";
 import { DashboardLayout } from "@/components/layouts";
 
+import AboutUs from "@/pages/about-us";
+import CheckoutPage from "@/pages/checkout-page";
 import AnalyticsPage from "@/pages/dashboard/analytics-page";
 import MainLayout from "@/components/layouts/main-layout.jsx";
 import ProtectedRoute from "@/components/guard/protected-route";
@@ -40,8 +42,16 @@ export const routes = [
         element: <ContactPage />,
       },
       {
+        path: "about",
+        element: <AboutUs />,
+      },
+      {
         path: "cart",
         element: <CartPage />,
+      },
+      {
+        path: "checkout",
+        element: <CheckoutPage />,
       },
       {
         path: "login",

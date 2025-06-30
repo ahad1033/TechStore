@@ -208,16 +208,18 @@ const CartPage = () => {
                 <div className="flex items-center space-x-2 text-green-700">
                   <Truck className="w-4 h-4" />
                   <span className="text-sm font-medium">
-                    Free shipping on orders over $50
+                    Free shipping on orders over $500
                   </span>
                 </div>
               </div>
 
               {/* Checkout Button */}
-              <Button className="w-full" size="lg">
-                <CreditCard className="w-5 h-5 mr-2" />
-                Proceed to Checkout
-              </Button>
+              <Link to="/checkout">
+                <Button className="w-full" size="lg">
+                  <CreditCard className="w-5 h-5 mr-2" />
+                  Proceed to Checkout
+                </Button>
+              </Link>
 
               {/* Payment Methods */}
               <div className="mt-4 text-center">

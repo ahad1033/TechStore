@@ -32,7 +32,7 @@ const ServicesSection = () => {
             className="flex justify-between space-x-3"
           >
             <div className="flex items-center mx-auto space-x-3">
-              <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-white">
+              <div className="flex-shrink-0 w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
                 {feature.icon}
               </div>
               <div>
