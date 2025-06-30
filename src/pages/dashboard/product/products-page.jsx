@@ -1,23 +1,25 @@
 import { toast } from "sonner";
 import { useState } from "react";
-import { Edit, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
   AlertDialog,
+  AlertDialogTitle,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogContent,
+  AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 
-import { useGetProductsQuery } from "@/store/features/productsApi";
-import { useDeleteCategoryMutation } from "@/store/features/categoriesApi";
+import {
+  useGetProductsQuery,
+  useDeleteProductMutation,
+} from "@/store/features/productsApi";
 
 import LoadingButton from "@/components/shared/loading-button";
 
@@ -37,13 +39,14 @@ export default function DProductsPage() {
 
   console.log("productsData: ", productsData);
 
-  const [deleteCategory, { isLoading: deleting }] = useDeleteCategoryMutation();
+  const [deleteProduct, { isLoading: deleting }] = useDeleteProductMutation();
 
   // Function to open the confirmation dialog
   const confirmDeleteCategory = (id) => {
     setProductToDelete(id);
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleEditProduct = (data) => {
     navigate(`/dashboard/update-product/${data.id}`, { replace: true });
   };
@@ -54,12 +57,12 @@ export default function DProductsPage() {
     toast.info("Wait a moment!");
 
     try {
-      const res = await deleteCategory(productToDelete).unwrap();
+      const res = await deleteProduct(productToDelete).unwrap();
 
       if (res.success) {
         await new Promise((resolve) => setTimeout(resolve, 300));
 
-        toast.success(res.message || "Category deleted successfully!");
+        toast.success(res.message || "Product deleted successfully!");
 
         setProductToDelete(null);
       }
@@ -108,13 +111,14 @@ export default function DProductsPage() {
       label: "Actions",
       render: (_, row) => (
         <div className="flex items-center space-x-2">
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             onClick={() => handleEditProduct(row)}
           >
             <Edit className="h-4 w-4" />
-          </Button>
+          </Button> */}
+
           <Button
             variant="ghost"
             size="sm"

@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
+import * as yup from "yup";
+import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { toast } from "sonner"; // For notifications
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -23,19 +23,21 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"; // For category dropdown
+} from "@/components/ui/select";
 
-import RichTextEditor from "@/components/text-editor/rich-text-editor"; // Your rich text editor
-import LoadingButton from "@/components/shared/loading-button"; // Assuming you have this
+import LoadingButton from "@/components/shared/loading-button";
+import RichTextEditor from "@/components/text-editor/rich-text-editor";
+
 import { useGetCategoriesQuery } from "@/store/features/categoriesApi";
-import { useCreateProductMutation } from "@/store/features/productsApi";
-import { useNavigate } from "react-router-dom";
+import {
+  useCreateProductMutation,
+  useGetProductQuery,
+  useUpdateProductMutation,
+} from "@/store/features/productsApi";
 
-// --- Dynamic Yup Schema ---
-// This schema will be created inside the component to handle dynamic image validation
-// based on whether it's an edit or create operation.
+const ProductForm = () => {
+  const { id } = useParams();
 
-const ProductForm = ({ onSubmit, initialData }) => {
   const navigate = useNavigate();
 
   // State for image previews (array of URLs)
@@ -44,10 +46,16 @@ const ProductForm = ({ onSubmit, initialData }) => {
 
   const { data: categories } = useGetCategoriesQuery({ page: 1, limit: 100 });
 
+  const { data: currentProduct } = useGetProductQuery(id, { skip: !id });
+
+  const initialData = currentProduct && currentProduct?.data;
+
   // Determine if we are in edit mode
   const isEdit = Boolean(initialData && initialData.id);
 
   const [createProduct] = useCreateProductMutation();
+
+  const [updateProduct] = useUpdateProductMutation();
 
   // --- Dynamic Yup Schema Definition ---
   const productSchema = yup.object().shape({
@@ -104,14 +112,14 @@ const ProductForm = ({ onSubmit, initialData }) => {
           .min(1, "At least one image is required")
           .max(4, "You can upload a maximum of 4 images")
           .test("fileType", "Only image files are allowed", (value) => {
-            if (!value || value.length === 0) return true; // Handled by .min(1)
+            if (!value || value.length === 0) return true;
             return value.every((file) =>
               ["image/jpeg", "image/png", "image/gif"].includes(file.type)
             );
           })
-          .test("fileSize", "Each image must be less than 5MB", (value) => {
-            if (!value || value.length === 0) return true; // Handled by .min(1)
-            return value.every((file) => file.size <= 5 * 1024 * 1024); // 5MB
+          .test("fileSize", "Each image must be less than 2MB", (value) => {
+            if (!value || value.length === 0) return true;
+            return value.every((file) => file.size <= 1 * 1024 * 1024);
           })
           .required("At least one image is required"),
   });
@@ -126,7 +134,7 @@ const ProductForm = ({ onSubmit, initialData }) => {
       specifications: "",
       regularPrice: "",
       discountPrice: "",
-      images: undefined, // For file input
+      images: undefined,
     },
   });
 
@@ -257,7 +265,7 @@ const ProductForm = ({ onSubmit, initialData }) => {
       uploadedImageUrls = [...existingImageUrls, ...uploadedImageUrls];
     }
 
-    console.log(data)
+    console.log(data);
 
     // Prepare the object to send to your database
     const productDataForDatabase = {
@@ -276,10 +284,10 @@ const ProductForm = ({ onSubmit, initialData }) => {
     try {
       let result;
       if (isEdit) {
-        //   result = await updateCategory({
-        //     id,
-        //     data: categoryDataForDatabase,
-        //   }).unwrap();
+        result = await updateProduct({
+          id,
+          data: productDataForDatabase,
+        }).unwrap();
       } else {
         result = await createProduct(productDataForDatabase).unwrap();
       }
@@ -300,8 +308,8 @@ const ProductForm = ({ onSubmit, initialData }) => {
 
     // Reset form only if it's a new product creation
     if (!isEdit) {
-    //   reset();
-    //   setImagePreviews([]);
+      //   reset();
+      //   setImagePreviews([]);
     }
     setIsUploadingImages(false);
   };
