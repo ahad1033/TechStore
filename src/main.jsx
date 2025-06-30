@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider defaultTheme="dark" storageKey="techstore-theme">
+        <ThemeProvider defaultTheme="light" storageKey="techstore-theme">
           <RouterProvider router={router} />
           <Toaster position="top-right" />
         </ThemeProvider>
