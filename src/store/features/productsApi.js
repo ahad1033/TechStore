@@ -10,7 +10,7 @@ export const productsApi = api.injectEndpoints({
         categoryId,
         subcategoryId,
       }) => ({
-        url: "/products",
+        url: "/products/get-all-product",
         params: { page, limit, search, categoryId, subcategoryId },
       }),
       providesTags: (result) =>
@@ -29,7 +29,7 @@ export const productsApi = api.injectEndpoints({
 
     createProduct: builder.mutation({
       query: (data) => ({
-        url: "/products",
+        url: "/products/create-product",
         method: "POST",
         body: data,
       }),
