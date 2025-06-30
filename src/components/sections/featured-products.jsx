@@ -1,23 +1,39 @@
 import React from "react";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { ShoppingCart, Heart, Eye, ArrowRight } from "lucide-react";
 
 import { useGetProductsQuery } from "@/store/features/productsApi";
 
-import FeaturedProductSkeletonCard from "../skeleton/featured-product-skeleton";
 import { Card } from "../ui/card";
-import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+
+import { addToCart } from "@/store/slices/cartSlice";
+
+import FeaturedProductSkeletonCard from "../skeleton/featured-product-skeleton";
 
 const FeaturedProducts = () => {
+  const dispatch = useDispatch();
+
   const { data: products, isLoading } = useGetProductsQuery({
     page: 1,
     limit: 10,
   });
 
-  const handleAddToCart = (productId) => {
-    // TODO: Implement add to cart functionality
-    console.log("Adding product to cart:", productId);
+  const handleAddToCart = (cartProduct) => {
+    console.log(cartProduct);
+    const productToAdd = {
+      product: cartProduct,
+      price:
+        cartProduct?.discountPrice > 0
+          ? cartProduct?.discountPrice
+          : cartProduct?.regularPrice,
+    };
+    dispatch(addToCart(productToAdd));
+
+    toast.success(`${cartProduct?.title} added successfylly in the cart`);
   };
 
   const handleAddToWishlist = (productId) => {
@@ -30,9 +46,7 @@ const FeaturedProducts = () => {
       <div>
         {/* Section Header */}
         <div className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4 px-2 py-1">
-            Featured Collection
-          </Badge>
+          <Badge className="mb-4 px-2 py-1">Featured Collection</Badge>
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             Featured Products
           </h2>
@@ -95,7 +109,7 @@ const FeaturedProducts = () => {
                     <div className="absolute bottom-0 left-0 right-0 bg-white/20 backdrop-blur-sm p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                       <Button
                         className="w-full"
-                        onClick={() => handleAddToCart(product.id)}
+                        onClick={() => handleAddToCart(product)}
                       >
                         <ShoppingCart className="w-4 h-4 mr-2" />
                         Add to Cart

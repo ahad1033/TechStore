@@ -1,9 +1,6 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Card } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Input } from "../components/ui/input";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   Trash2,
   Plus,
@@ -13,60 +10,44 @@ import {
   CreditCard,
   Truck,
 } from "lucide-react";
+import { Card } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+
+import {
+  removeFromCart,
+  updateQuantity,
+  useCurrentCart,
+} from "@/store/slices/cartSlice";
+import { toast } from "sonner";
 
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "iPhone 15 Pro Max",
-      price: 1199,
-      image:
-        "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=200&h=200&fit=crop",
-      quantity: 1,
-      category: "Smartphones",
-    },
-    {
-      id: 2,
-      name: "Sony WH-1000XM5",
-      price: 349,
-      image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop",
-      quantity: 2,
-      category: "Audio",
-    },
-    {
-      id: 3,
-      name: "MacBook Air M2",
-      price: 1199,
-      image:
-        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&h=200&fit=crop",
-      quantity: 1,
-      category: "Laptops",
-    },
-  ]);
+  const dispatch = useDispatch();
 
-  const updateQuantity = (itemId, newQuantity) => {
-    if (newQuantity < 1) return;
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      )
-    );
+  const cartProducts = useSelector(useCurrentCart);
+
+  const updateCartQuantity = (id, quantity) => {
+    if (quantity < 1) {
+      toast.error("Can't be reduced item less then 1");
+      return;
+    }
+
+    const res = dispatch(updateQuantity({ id, quantity }));
+
+    console.log(res);
   };
 
-  const removeItem = (itemId) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== itemId));
+  const handleClearItem = (itemId) => {
+    dispatch(removeFromCart({ id: itemId }));
   };
 
-  const subtotal = cartItems.reduce(
+  const subtotal = cartProducts?.items?.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const shipping = subtotal > 50 ? 0 : 9.99;
-  const tax = subtotal * 0.08; // 8% tax
-  const total = subtotal + shipping + tax;
+  const shipping = subtotal > 500 ? 0 : 10;
+  const total = subtotal + shipping;
 
-  if (cartItems.length === 0) {
+  if (cartProducts?.items?.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -88,43 +69,47 @@ const CartPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="mb-8">
           <Link
             to="/products"
-            className="inline-flex items-center text-gray-600 hover:text-primary mb-4"
+            className="inline-flex items-center text-primary hover:text-primary mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Continue Shopping
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+          <h1 className="text-3xl font-bold">Shopping Cart</h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cartItems.map((item) => (
-              <Card key={item.id} className="p-6">
+            {cartProducts?.items?.map((item) => (
+              <Card key={item?.product?.id} className="p-6 bg-foreground/5">
                 <div className="flex items-center space-x-4">
                   {/* Product Image */}
-                  <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                  <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item?.product?.images[0]}
+                      alt={item?.product?.title}
                       className="w-full h-full object-cover"
                     />
                   </div>
 
                   {/* Product Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">
-                      {item.name}
+                    <h3 className="font-semibold truncate">
+                      {item?.product?.title}
                     </h3>
-                    <p className="text-sm text-gray-500">{item.category}</p>
+
+                    {/* <p className="text-sm text-gray-500">
+                      {item.product.categoryId.name}
+                    </p> */}
+
                     <p className="text-lg font-bold text-primary">
-                      ${item.price}
+                      ${item?.price}
                     </p>
                   </div>
 
@@ -133,7 +118,9 @@ const CartPage = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        updateCartQuantity(item.product.id, item.quantity - 1)
+                      }
                     >
                       <Minus className="w-4 h-4" />
                     </Button>
@@ -143,7 +130,9 @@ const CartPage = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      onClick={() =>
+                        updateCartQuantity(item.product.id, item.quantity + 1)
+                      }
                     >
                       <Plus className="w-4 h-4" />
                     </Button>
@@ -151,7 +140,7 @@ const CartPage = () => {
 
                   {/* Total Price */}
                   <div className="text-right">
-                    <p className="font-bold text-gray-900">
+                    <p className="font-bold">
                       ${(item.price * item.quantity).toFixed(2)}
                     </p>
                   </div>
@@ -160,7 +149,7 @@ const CartPage = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeItem(item.id)}
+                    onClick={() => handleClearItem(item?.product?.id)}
                     className="text-red-500 hover:text-red-700 hover:bg-red-50"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -173,26 +162,24 @@ const CartPage = () => {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <Card className="p-6 sticky top-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
+              <h2 className="text-xl font-bold text-muted-foreground mb-6">
                 Order Summary
               </h2>
 
               {/* Summary Items */}
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-muted-foreground">Subtotal</span>
                   <span className="font-medium">${subtotal.toFixed(2)}</span>
                 </div>
+
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-muted-foreground">Shipping</span>
                   <span className="font-medium">
                     {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Tax</span>
-                  <span className="font-medium">${tax.toFixed(2)}</span>
-                </div>
+
                 <div className="border-t pt-3">
                   <div className="flex justify-between">
                     <span className="text-lg font-bold">Total</span>
@@ -204,7 +191,7 @@ const CartPage = () => {
               </div>
 
               {/* Shipping Info */}
-              <div className="mb-6 p-4 bg-green-50 rounded-lg">
+              <div className="mb-6 p-4 border border-primary dark:border-white dark:bg-white rounded-lg">
                 <div className="flex items-center space-x-2 text-green-700">
                   <Truck className="w-4 h-4" />
                   <span className="text-sm font-medium">
@@ -222,7 +209,7 @@ const CartPage = () => {
               </Link>
 
               {/* Payment Methods */}
-              <div className="mt-4 text-center">
+              {/* <div className="mt-4 text-center">
                 <p className="text-xs text-gray-500 mb-2">We accept</p>
                 <div className="flex justify-center space-x-2">
                   <div className="w-8 h-5 bg-gray-200 rounded text-xs flex items-center justify-center">
@@ -238,6 +225,12 @@ const CartPage = () => {
                     PP
                   </div>
                 </div>
+              </div> */}
+
+              <div className="mt-4 text-center">
+                <p className="text-xs text-gray-500 mb-2">
+                  We accept cash on delivery
+                </p>
               </div>
             </Card>
           </div>
