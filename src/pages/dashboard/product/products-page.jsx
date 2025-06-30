@@ -37,8 +37,6 @@ export default function DProductsPage() {
     search,
   });
 
-  console.log("productsData: ", productsData);
-
   const [deleteProduct, { isLoading: deleting }] = useDeleteProductMutation();
 
   // Function to open the confirmation dialog
@@ -160,7 +158,7 @@ export default function DProductsPage() {
         pagination={pagination}
         onPageChange={setPage}
         onSearch={setSearch}
-        searchPlaceholder="Search categories..."
+        searchPlaceholder="Search product..."
       />
 
       {/* AlertDialog for Delete Confirmation */}

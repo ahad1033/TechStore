@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
 import {
   BarChart3,
   Package,
@@ -67,7 +67,7 @@ export default function DashboardLayout() {
 
   const user = useSelector(useCurrentUser)?.user;
 
-  console.log(user)
+  console.log(user);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -96,7 +96,6 @@ export default function DashboardLayout() {
 
   const handleNavigation = (path) => {
     navigate(path);
-    // Close sidebar on mobile after navigation
     if (window.innerWidth < 1024) {
       setIsSidebarOpen(false);
     }
@@ -112,12 +111,14 @@ export default function DashboardLayout() {
         onCollapsedChange={setIsSidebarOpen}
       >
         <SidebarHeader className="border-b p-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Package className="w-4 h-4 text-primary-foreground" />
+          <Link to="/">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Package className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <span className="font-semibold text-lg">TechStore</span>
             </div>
-            <span className="font-semibold text-lg">TechStore</span>
-          </div>
+          </Link>
         </SidebarHeader>
 
         <SidebarContent>
@@ -168,10 +169,7 @@ export default function DashboardLayout() {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="relative h-8 w-8"
-                  >
+                  <Button variant="ghost" className="relative h-8 w-8">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user?.avatar} alt={user?.name} />
 
