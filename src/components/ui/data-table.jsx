@@ -9,13 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
   Search,
@@ -23,6 +16,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  Loader,
 } from "lucide-react";
 
 export default function DataTable({
@@ -34,10 +28,11 @@ export default function DataTable({
   onSearch,
   onSort,
   searchPlaceholder = "Search...",
-  actions = null,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
+
   const [sortField, setSortField] = useState("");
+
   const [sortDirection, setSortDirection] = useState("asc");
 
   const handleSearch = (value) => {
@@ -72,8 +67,7 @@ export default function DataTable({
 
   return (
     <div className="space-y-4">
-      {/* Search and Actions Bar */}
-      <div className="flex items-center justify-between">
+      <div className="flex sm:flex-col items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -85,9 +79,6 @@ export default function DataTable({
             />
           </div>
         </div>
-        {actions && (
-          <div className="flex items-center space-x-2">{actions}</div>
-        )}
       </div>
 
       {/* Table */}
@@ -117,6 +108,7 @@ export default function DataTable({
               ))}
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {loading ? (
               <TableRow>
@@ -124,7 +116,7 @@ export default function DataTable({
                   colSpan={columns.length}
                   className="text-center py-8"
                 >
-                  Loading...
+                  <Loader className="animate-spin" /> Loading...
                 </TableCell>
               </TableRow>
             ) : data.length === 0 ? (
@@ -178,6 +170,7 @@ export default function DataTable({
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
+            
             <Button
               variant="outline"
               size="sm"
@@ -186,6 +179,7 @@ export default function DataTable({
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
+
             <div className="flex items-center space-x-1">
               {Array.from(
                 { length: Math.min(5, pagination.totalPages) },

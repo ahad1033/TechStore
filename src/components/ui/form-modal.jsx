@@ -60,6 +60,7 @@ export default function FormModal({
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const renderField = (field) => {
     const { name, type, label, placeholder, options, ...rest } = field;
 

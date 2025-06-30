@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import * as yup from "yup";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import DataTable from "@/components/ui/data-table";
 import FormModal from "@/components/ui/form-modal";
 import {
@@ -10,7 +9,8 @@ import {
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
 } from "@/store/features/categoriesApi";
-import { Edit, Trash2, Eye } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const categorySchema = yup.object({
   name: yup
@@ -22,6 +22,8 @@ const categorySchema = yup.object({
 });
 
 export default function CategoriesPage() {
+  const navigate = useNavigate();
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [editingCategory, setEditingCategory] = useState(null);
@@ -32,6 +34,8 @@ export default function CategoriesPage() {
     limit: 10,
     search,
   });
+
+  console.log("categoriesData: ", categoriesData);
 
   const [createCategory, { isLoading: creating }] = useCreateCategoryMutation();
   const [updateCategory, { isLoading: updating }] = useUpdateCategoryMutation();
@@ -57,6 +61,10 @@ export default function CategoriesPage() {
     }
   };
 
+  const handleEditCategory = (data) => {
+    navigate(`/dashboard/update-category/${data.id}`, { replace: true });
+  };
+
   const handleDeleteCategory = async (id) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
@@ -68,6 +76,15 @@ export default function CategoriesPage() {
   };
 
   const columns = [
+    {
+      key: "image",
+      label: "Image",
+      render: (img) => (
+        <div>
+          <img src={img} className="w-30" />
+        </div>
+      ),
+    },
     {
       key: "name",
       label: "Name",
@@ -83,16 +100,6 @@ export default function CategoriesPage() {
       ),
     },
     {
-      key: "status",
-      label: "Status",
-      type: "status",
-    },
-    {
-      key: "createdAt",
-      label: "Created",
-      type: "date",
-    },
-    {
       key: "actions",
       label: "Actions",
       render: (_, row) => (
@@ -100,7 +107,7 @@ export default function CategoriesPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setEditingCategory(row)}
+            onClick={() => handleEditCategory(row)}
           >
             <Edit className="h-4 w-4" />
           </Button>
@@ -128,10 +135,14 @@ export default function CategoriesPage() {
     : null;
 
   return (
-    <div className="space-y-6">
+    <div className="container space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Categories</h1>
-        <Badge variant="outline">{categoriesData?.total || 0} categories</Badge>
+
+        <Link to="/dashboard/create-category">
+          <Button>Add category</Button>
+        </Link>
+        {/* <Badge variant="outline">{categoriesData?.total || 0} categories</Badge> */}
       </div>
 
       <DataTable
@@ -142,11 +153,6 @@ export default function CategoriesPage() {
         onPageChange={setPage}
         onSearch={setSearch}
         searchPlaceholder="Search categories..."
-        actions={
-          <Button onClick={() => setIsCreateModalOpen(true)}>
-            Add New Category
-          </Button>
-        }
       />
 
       {/* Create Modal */}

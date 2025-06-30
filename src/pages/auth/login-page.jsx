@@ -12,6 +12,7 @@ import { Button } from "../../components/ui/button";
 import { verifyToken } from "@/utils/verify-token";
 import { setUser } from "@/store/slices/authSlice";
 import { useLoginMutation } from "@/store/slices/authApi";
+import { toast } from "sonner";
 
 // ----------------------------------------------------------------------
 
@@ -50,25 +51,38 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 500));
+      const response = await login(data).unwrap();
 
-    const response = await login(data).unwrap();
+      if (!response.success) {
+        toast.error(
+          response.message || "Something went wrong! Please try again."
+        );
+      }
 
-    if (response.success) {
-      const user = await verifyToken(response?.data?.accessToken);
+      if (response.success) {
+        const user = await verifyToken(response?.data?.accessToken);
 
-      dispatch(setUser({ user, token: response?.data?.accessToken }));
+        dispatch(setUser({ user, token: response?.data?.accessToken }));
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
+        toast.success(response.message || "Logged in successfully!");
 
-      navigate("/", { replace: true });
+        await new Promise((resolve) => setTimeout(resolve, 300));
 
-      reset();
+        navigate("/", { replace: true });
+
+        reset();
+      }
+    } catch (error) {
+      toast.error(
+        error?.data.error || "Something went wrong! Please try again."
+      );
+      console.error("Login error:", error);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   };
 
   return (

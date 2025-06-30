@@ -4,7 +4,7 @@ export const categoriesApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getCategories: builder.query({
       query: ({ page = 1, limit = 10, search = "" }) => ({
-        url: "/categories",
+        url: "/category/get-all-category",
         params: { page, limit, search },
       }),
       providesTags: (result) =>
@@ -17,13 +17,13 @@ export const categoriesApi = api.injectEndpoints({
     }),
 
     getCategory: builder.query({
-      query: (id) => `/categories/${id}`,
+      query: (id) => `/category/${id}`,
       providesTags: (result, error, id) => [{ type: "Category", id }],
     }),
 
     createCategory: builder.mutation({
       query: (data) => ({
-        url: "/categories",
+        url: "/category/create-category",
         method: "POST",
         body: data,
       }),
@@ -31,9 +31,9 @@ export const categoriesApi = api.injectEndpoints({
     }),
 
     updateCategory: builder.mutation({
-      query: ({ id, ...data }) => ({
-        url: `/categories/${id}`,
-        method: "PUT",
+      query: ({ id, data }) => ({
+        url: `/category/update-category/${id}`,
+        method: "PATCH",
         body: data,
       }),
       invalidatesTags: (result, error, { id }) => [
