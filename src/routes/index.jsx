@@ -66,7 +66,11 @@ export const routes = [
 
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
@@ -134,7 +138,11 @@ export const routes = [
       },
       {
         path: "subcategories",
-        element: <SubcategoriesPage />,
+        element: (
+          <ProtectedRoute>
+            <SubcategoriesPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

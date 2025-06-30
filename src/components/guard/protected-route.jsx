@@ -1,11 +1,13 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import { useCurrentUser } from "@/store/slices/authSlice";
 
 export default function ProtectedRoute({ children, requiredRole = null }) {
-  const user = useSelector((state) => state.auth).user;
+  const user = useSelector(useCurrentUser)?.user;
 
   if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    console.log("no user");
+    return <Navigate to="/login" />;
   }
 
   if (requiredRole && user?.role !== requiredRole) {

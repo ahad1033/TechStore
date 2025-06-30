@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import * as yup from "yup";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
 import React, { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -66,13 +66,9 @@ const ProductForm = () => {
       .required("Product description is required")
       .min(10, "Description must be at least 10 characters"),
     features: yup
-      .string()
-      .required("Product features are required")
-      .min(10, "Features must be at least 10 characters"),
+      .string(),
     specifications: yup
-      .string()
-      .required("Product specifications are required")
-      .min(10, "Specifications must be at least 10 characters"),
+      .string(),
     regularPrice: yup
       .number()
       .typeError("Regular price must be a number")
@@ -86,17 +82,16 @@ const ProductForm = () => {
         yup.ref("regularPrice"),
         "Discount price must be less than regular price"
       )
-      .optional(), // Discount price is optional
+      .optional(),
     images: isEdit
-      ? yup // In edit mode
+      ? yup
           .array()
-          .of(yup.mixed()) // Can be File objects or existing URLs
+          .of(yup.mixed())
           .max(4, "You can upload a maximum of 4 images")
           .test(
             "atLeastOneImage",
             "At least one image is required",
             function (value) {
-              // If there are existing images or new files, it's valid
               return (
                 (initialData?.images && initialData.images.length > 0) ||
                 (value &&
@@ -105,8 +100,8 @@ const ProductForm = () => {
               );
             }
           )
-          .optional() // Images are optional if existing ones are present
-      : yup // In create mode
+          .optional()
+      : yup
           .array()
           .of(yup.mixed())
           .min(1, "At least one image is required")
@@ -114,7 +109,13 @@ const ProductForm = () => {
           .test("fileType", "Only image files are allowed", (value) => {
             if (!value || value.length === 0) return true;
             return value.every((file) =>
-              ["image/jpeg", "image/png", "image/gif"].includes(file.type)
+              [
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/jpeg",
+                "image/webp",
+              ].includes(file.type)
             );
           })
           .test("fileSize", "Each image must be less than 2MB", (value) => {
@@ -487,7 +488,7 @@ const ProductForm = () => {
                 <FormControl>
                   <Input
                     type="file"
-                    accept="image/*"
+                    accept="image/*, image/jpeg"
                     multiple // Allow multiple file selection
                     onChange={(e) => {
                       // Pass all selected files to handleImageChange
