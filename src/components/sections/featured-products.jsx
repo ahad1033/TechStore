@@ -23,7 +23,6 @@ const FeaturedProducts = () => {
   });
 
   const handleAddToCart = (cartProduct) => {
-    console.log(cartProduct);
     const productToAdd = {
       product: cartProduct,
       price:

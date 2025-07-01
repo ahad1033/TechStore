@@ -42,16 +42,16 @@ import { ThemeToggle } from "../theme/theme-toggle";
 const adminMenuItems = [
   { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
   { icon: Package, label: "Categories", path: "/dashboard/categories" },
-  { icon: Package, label: "Subcategories", path: "/dashboard/subcategories" },
+  // { icon: Package, label: "Subcategories", path: "/dashboard/subcategories" },
   { icon: ShoppingCart, label: "Products", path: "/dashboard/products" },
   { icon: Users, label: "Orders", path: "/dashboard/orders" },
 ];
 
 const userMenuItems = [
+  { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
   { icon: ShoppingCart, label: "Orders", path: "/dashboard/orders" },
   { icon: Heart, label: "Wishlist", path: "/dashboard/wishlist" },
   { icon: User, label: "Profile", path: "/dashboard/profile" },
-  { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
 ];
 
 export default function DashboardLayout() {

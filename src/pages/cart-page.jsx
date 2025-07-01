@@ -31,9 +31,7 @@ const CartPage = () => {
       return;
     }
 
-    const res = dispatch(updateQuantity({ id, quantity }));
-
-    console.log(res);
+    dispatch(updateQuantity({ id, quantity }));
   };
 
   const handleClearItem = (itemId) => {

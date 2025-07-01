@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
@@ -16,22 +17,36 @@ import {
   useUpdateOrderMutation,
 } from "@/store/features/ordersApi";
 import { Edit, Eye, Package, User, Calendar, DollarSign } from "lucide-react";
+import { useCurrentUser } from "@/store/slices/authSlice";
 
 export default function OrdersPage() {
   const [page, setPage] = useState(1);
+
   const [search, setSearch] = useState("");
+
   const [selectedOrder, setSelectedOrder] = useState(null);
+
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
 
-  const { user } = useSelector((state) => state.auth);
+  const user = useSelector(useCurrentUser)?.user;
+
   const isAdmin = user?.role === "admin";
 
-  const { data: ordersData, isLoading } = useGetOrdersQuery({
-    page,
-    limit: 10,
-    search,
-    userId: isAdmin ? undefined : user?.id,
-  });
+  const { data: ordersData, isLoading } = useGetOrdersQuery(
+    {
+      // page,
+      // limit: 10,
+      search,
+      // userId: isAdmin ? undefined : user?.id,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  console.log("ordersData: ", ordersData);
 
   const { data: orderDetails, isLoading: orderDetailsLoading } =
     useGetOrderQuery(selectedOrder?.id, { skip: !selectedOrder?.id });
@@ -57,19 +72,23 @@ export default function OrdersPage() {
       key: "orderNumber",
       label: "Order #",
       sortable: true,
-      render: (value) => <span className="font-mono text-sm">{value}</span>,
+      render: () => (
+        <span className="font-mono text-sm">
+          {(() => Math.floor(Math.random() * (100 - 50 + 1)) + 3)()}
+        </span>
+      ),
     },
     {
-      key: "customer",
+      key: "name",
       label: "Customer",
-      render: (_, row) => (
-        <div>
-          <div className="font-medium">{row.customer?.name || "N/A"}</div>
-          <div className="text-sm text-muted-foreground">
-            {row.customer?.email}
-          </div>
-        </div>
-      ),
+      // render: (value) => (
+      //   <div>
+      //     <div className="font-medium">{value?.userId?.name || "N/A"}</div>
+      //     <div className="text-sm text-muted-foreground">
+      //       {value?.userId?.email}
+      //     </div>
+      //   </div>
+      // ),
     },
     {
       key: "total",
@@ -88,38 +107,40 @@ export default function OrdersPage() {
       type: "date",
       sortable: true,
     },
-    {
-      key: "actions",
-      label: "Actions",
-      render: (_, row) => (
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleViewOrder(row)}
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-          {isAdmin && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleUpdateOrderStatus(row.id, "processing")}
-              disabled={updating}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      ),
-    },
+    // {
+    //   key: "actions",
+    //   label: "Actions",
+    //   render: (_, row) => (
+    //     <div className="flex items-center space-x-2">
+    //       <Button
+    //         variant="ghost"
+    //         size="sm"
+    //         onClick={() => handleViewOrder(row)}
+    //       >
+    //         <Eye className="h-4 w-4" />
+    //       </Button>
+    //       {isAdmin && (
+    //         <Button
+    //           variant="ghost"
+    //           size="sm"
+    //           onClick={() => handleUpdateOrderStatus(row.id, "processing")}
+    //           disabled={updating}
+    //         >
+    //           <Edit className="h-4 w-4" />
+    //         </Button>
+    //       )}
+    //     </div>
+    //   ),
+    // },
   ];
 
   const pagination = ordersData
     ? {
         currentPage: page,
-        totalPages: Math.ceil(ordersData.total / 10),
-        total: ordersData.total,
+        // totalPages: Math.ceil(ordersData?.total / 10),
+        totalPages: Math.ceil(ordersData?.data.length / 10),
+        // total: ordersData.total,
+        total: ordersData.data.length,
         from: (page - 1) * 10 + 1,
         to: Math.min(page * 10, ordersData.total),
       }
@@ -129,7 +150,7 @@ export default function OrdersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Orders</h1>
-        <Badge variant="outline">{ordersData?.total || 0} orders</Badge>
+        <Badge>{ordersData?.data?.length || 0} orders</Badge>
       </div>
 
       <DataTable
@@ -162,7 +183,7 @@ export default function OrdersPage() {
               <div className="space-y-6">
                 {/* Order Header */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card>
+                  {/* <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium">
                         Order Information
@@ -192,9 +213,9 @@ export default function OrdersPage() {
                         </div>
                       </div>
                     </CardContent>
-                  </Card>
+                  </Card> */}
 
-                  <Card>
+                  {/* <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium">
                         Customer
@@ -216,9 +237,9 @@ export default function OrdersPage() {
                         </div>
                       </div>
                     </CardContent>
-                  </Card>
+                  </Card> */}
 
-                  <Card>
+                  {/* <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium">
                         Status
@@ -259,7 +280,7 @@ export default function OrdersPage() {
                         </div>
                       )}
                     </CardContent>
-                  </Card>
+                  </Card> */}
                 </div>
 
                 {/* Shipping Address */}
@@ -269,13 +290,13 @@ export default function OrdersPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-sm">
-                      <div>{orderDetails?.shippingAddress?.street}</div>
-                      <div>
-                        {orderDetails?.shippingAddress?.city},{" "}
-                        {orderDetails?.shippingAddress?.state}
+                      <div>{ordersData?.data?.shippingAddress}</div>
+                      {/* <div>
+                        {ordersData?.data?.shippingAddress?.city},{" "}
+                        {ordersData?.data?.shippingAddress?.state}
                       </div>
-                      <div>{orderDetails?.shippingAddress?.zipCode}</div>
-                      <div>{orderDetails?.shippingAddress?.country}</div>
+                      <div>{ordersData?.data?.shippingAddress?.zipCode}</div>
+                      <div>{ordersData?.data?.shippingAddress?.country}</div> */}
                     </div>
                   </CardContent>
                 </Card>

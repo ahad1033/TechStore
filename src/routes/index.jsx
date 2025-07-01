@@ -19,6 +19,7 @@ import CategoryForm from "@/pages/dashboard/category/category-form";
 import DProductsPage from "@/pages/dashboard/product/products-page";
 import SubcategoriesPage from "@/pages/dashboard/subcategories-page";
 import CategoriesPage from "@/pages/dashboard/category/categories-page";
+import OrdersPage from "@/pages/dashboard/orders-page";
 
 export const routes = [
   {
@@ -141,6 +142,14 @@ export const routes = [
         element: (
           <ProtectedRoute>
             <SubcategoriesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orders",
+        element: (
+          <ProtectedRoute>
+            <OrdersPage />
           </ProtectedRoute>
         ),
       },

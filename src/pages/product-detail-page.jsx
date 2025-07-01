@@ -19,77 +19,63 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useGetProductQuery } from "@/store/features/productsApi";
+import { ServicesSection } from "@/components/sections";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/store/slices/cartSlice";
+import { toast } from "sonner";
 
 const ProductDetailPage = () => {
-  // eslint-disable-next-line no-unused-vars
+  const dispatch = useDispatch();
+
   const { id } = useParams();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
+  const { data: currentProduct } = useGetProductQuery(id);
+
   // Mock product data - in real app, fetch by ID
-  const product = {
-    id: 1,
-    name: "iPhone 15 Pro Max",
-    price: 1199,
-    originalPrice: 1399,
-    images: [
-      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop",
-    ],
-    category: "Smartphones",
-    rating: 4.8,
-    reviews: 1247,
-    discount: 14,
-    isNew: true,
-    description:
-      "The iPhone 15 Pro Max represents the pinnacle of smartphone technology, featuring the most advanced camera system ever in an iPhone, the A17 Pro chip for exceptional performance, and a stunning 6.7-inch Super Retina XDR display.",
-    features: [
-      "A17 Pro chip with 6-core GPU",
-      "48MP Main camera with 2x Telephoto",
-      "5x Telephoto camera",
-      "Super Retina XDR display",
-      "Titanium design",
-      "USB-C connector",
-      "Action button",
-      "Emergency SOS via satellite",
-    ],
-    specifications: {
-      Display: "6.7-inch Super Retina XDR display",
-      Chip: "A17 Pro chip with 6-core GPU",
-      Storage: "256GB, 512GB, 1TB",
-      Camera: "48MP Main + 12MP Ultra Wide + 5x Telephoto",
-      Battery: "Up to 29 hours video playback",
-      Colors: "Natural Titanium, Blue Titanium, White Titanium, Black Titanium",
-    },
-    inStock: true,
-    stockCount: 15,
-  };
 
   const handleAddToCart = () => {
-    console.log("Adding to cart:", { productId: product.id, quantity });
+    const productToAdd = {
+      product: currentProduct?.data,
+      quantity,
+      price:
+        currentProduct?.data?.discountPrice > 0
+          ? currentProduct?.data?.discountPrice
+          : currentProduct?.data?.rgularPrice,
+    };
+    dispatch(addToCart(productToAdd));
+
+    toast.success(
+      `${currentProduct?.data?.title} added successfylly in the cart`
+    );
   };
 
   const handleAddToWishlist = () => {
-    console.log("Adding to wishlist:", product.id);
+    // console.log("Adding to wishlist:", product.id);
+    dispatch(addToCart({ product: currentProduct, quantity }));
   };
 
   const nextImage = () => {
-    setSelectedImage((prev) => (prev + 1) % product.images.length);
+    setSelectedImage(
+      (prev) => (prev + 1) % currentProduct?.data?.images?.length
+    );
   };
 
   const prevImage = () => {
     setSelectedImage(
-      (prev) => (prev - 1 + product.images.length) % product.images.length
+      (prev) =>
+        (prev - 1 + currentProduct?.data?.images?.length) %
+        currentProduct?.data?.images?.length
     );
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <div className="container">
         {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+        <nav className="flex items-center space-x-2 text-sm my-8">
           <a href="/" className="hover:text-primary">
             Home
           </a>
@@ -98,17 +84,19 @@ const ProductDetailPage = () => {
             Products
           </a>
           <span>/</span>
-          <span className="text-gray-900">{product.name}</span>
+          <span className="text-muted-foreground">
+            {currentProduct?.data?.title}
+          </span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
           <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative aspect-square bg-white rounded-lg overflow-hidden">
+            <div className="relative aspect-square bg-white/20 rounded-lg overflow-hidden">
               <img
-                src={product.images[selectedImage]}
-                alt={product.name}
+                src={currentProduct?.data?.images[selectedImage]}
+                alt={currentProduct?.data.title}
                 className="w-full h-full object-cover"
               />
 
@@ -129,7 +117,7 @@ const ProductDetailPage = () => {
 
             {/* Thumbnail Images */}
             <div className="grid grid-cols-4 gap-2">
-              {product.images.map((image, index) => (
+              {currentProduct?.data?.images?.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
@@ -141,7 +129,7 @@ const ProductDetailPage = () => {
                 >
                   <img
                     src={image}
-                    alt={`${product.name} ${index + 1}`}
+                    alt={`${currentProduct?.data?.title} ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -152,20 +140,22 @@ const ProductDetailPage = () => {
           {/* Product Info */}
           <div className="space-y-6">
             {/* Badges */}
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               {product.isNew && (
                 <Badge className="bg-green-500 text-white">New</Badge>
               )}
               {product.discount > 0 && (
                 <Badge variant="destructive">-{product.discount}% OFF</Badge>
               )}
-            </div>
+            </div> */}
 
             {/* Product Name */}
-            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+            <h1 className="text-3xl font-bold text-primary">
+              {currentProduct?.data?.title}
+            </h1>
 
             {/* Category */}
-            <p className="text-gray-500">{product.category}</p>
+            <Badge className="">{currentProduct?.data?.categoryId?.name}</Badge>
 
             {/* Rating */}
             <div className="flex items-center space-x-2">
@@ -174,30 +164,49 @@ const ProductDetailPage = () => {
                   <Star
                     key={i}
                     className={`w-5 h-5 ${
-                      i < Math.floor(product.rating)
+                      i < Math.floor(2)
                         ? "text-yellow-400 fill-current"
                         : "text-gray-300"
                     }`}
                   />
                 ))}
               </div>
-              <span className="text-gray-600">({product.reviews} reviews)</span>
+              <span className="text-gray-600">2 reviews</span>
             </div>
 
             {/* Price */}
             <div className="flex items-center space-x-4">
-              <span className="text-3xl font-bold text-primary">
-                ${product.price}
-              </span>
-              {product.originalPrice > product.price && (
-                <span className="text-xl text-gray-400 line-through">
-                  ${product.originalPrice}
+              {currentProduct?.data.discountPrice &&
+              Number(currentProduct?.data.discountPrice) <
+                Number(currentProduct?.data.regularPrice) ? (
+                <>
+                  <span className="text-xl font-bold text-primary">
+                    ${currentProduct?.data.discountPrice}
+                  </span>
+                  <span className="text-lg text-gray-400 line-through">
+                    ${currentProduct?.data.regularPrice}
+                  </span>
+                </>
+              ) : (
+                <span className="text-xl font-bold text-primary">
+                  ${currentProduct?.data.regularPrice}
                 </span>
               )}
             </div>
 
+            {currentProduct?.data?.features && (
+              <>
+                <h3 className="font-semibold">Key features: </h3>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: currentProduct?.data?.features,
+                  }}
+                />
+              </>
+            )}
+
             {/* Stock Status */}
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <div
                 className={`w-3 h-3 rounded-full ${
                   product.inStock ? "bg-green-500" : "bg-red-500"
@@ -208,7 +217,7 @@ const ProductDetailPage = () => {
                   ? `${product.stockCount} in stock`
                   : "Out of stock"}
               </span>
-            </div>
+            </div> */}
 
             {/* Quantity */}
             <div className="flex items-center space-x-4">
@@ -234,12 +243,7 @@ const ProductDetailPage = () => {
 
             {/* Action Buttons */}
             <div className="flex space-x-4">
-              <Button
-                size="lg"
-                className="flex-1"
-                onClick={handleAddToCart}
-                disabled={!product.inStock}
-              >
+              <Button size="lg" className="flex-1" onClick={handleAddToCart}>
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Add to Cart
               </Button>
@@ -269,61 +273,60 @@ const ProductDetailPage = () => {
         {/* Product Details Tabs */}
         <div className="mt-16">
           <Tabs defaultValue="description" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3  mb-4">
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="features">Features</TabsTrigger>
               <TabsTrigger value="specifications">Specifications</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              {/* <TabsTrigger value="reviews">Reviews</TabsTrigger> */}
             </TabsList>
 
             <TabsContent value="description" className="mt-6">
               <Card className="p-6">
-                <p className="text-gray-700 leading-relaxed">
-                  {product.description}
-                </p>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: currentProduct?.data?.description,
+                  }}
+                />
               </Card>
             </TabsContent>
 
             <TabsContent value="features" className="mt-6">
               <Card className="p-6">
-                <ul className="space-y-2">
-                  {product.features.map((feature, index) => (
-                    <li key={index} className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: currentProduct?.data?.features,
+                  }}
+                />
               </Card>
             </TabsContent>
 
             <TabsContent value="specifications" className="mt-6">
               <Card className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {Object.entries(product.specifications).map(
-                    ([key, value]) => (
-                      <div
-                        key={key}
-                        className="flex justify-between py-2 border-b border-gray-200"
-                      >
-                        <span className="font-medium text-gray-700">{key}</span>
-                        <span className="text-gray-600">{value}</span>
-                      </div>
-                    )
-                  )}
-                </div>
+                {currentProduct?.data?.specification ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: currentProduct?.data?.specification,
+                    }}
+                  />
+                ) : (
+                  <p className="text-yellow-500">
+                    This product has no specification!
+                  </p>
+                )}
               </Card>
             </TabsContent>
 
-            <TabsContent value="reviews" className="mt-6">
-              <Card className="p-6">
-                <p className="text-gray-600">Reviews coming soon...</p>
-              </Card>
-            </TabsContent>
+            {/* <TabsContent value="reviews" className="mt-6">
+            <Card className="p-6">
+              <p className="text-gray-600">Reviews coming soon...</p>
+            </Card>
+          </TabsContent> */}
           </Tabs>
         </div>
       </div>
-    </div>
+
+      <ServicesSection />
+    </>
   );
 };
 

@@ -5,7 +5,6 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import {
-  Star,
   ShoppingCart,
   Heart,
   Filter,
@@ -37,17 +36,18 @@ const ProductsPage = () => {
     page,
     limit,
     search: filters.search,
+    categoryId: filters.category,
   });
 
   const { data: categories } = useGetCategoriesQuery({ page: 1, limit: 50 });
 
-  const priceRanges = [
-    "All",
-    "Under $100",
-    "$100 - $500",
-    "$500 - $1000",
-    "Over $1000",
-  ];
+  // const priceRanges = [
+  //   "All",
+  //   "Under $100",
+  //   "$100 - $500",
+  //   "$500 - $1000",
+  //   "Over $1000",
+  // ];
 
   const totalPages = products?.meta?.totalPages;
   const startIndex = (page - 1) * limit;
@@ -125,7 +125,7 @@ const ProductsPage = () => {
               </div>
 
               {/* Price Range Filter */}
-              <div className="mb-6">
+              {/* <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">
                   Price Range
                 </label>
@@ -143,7 +143,7 @@ const ProductsPage = () => {
                     </option>
                   ))}
                 </select>
-              </div>
+              </div> */}
 
               {/* Clear Filters */}
               <Button
@@ -198,7 +198,7 @@ const ProductsPage = () => {
             <div
               className={`grid gap-6 ${
                 viewMode === "grid"
-                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                  ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                   : "grid-cols-1"
               }`}
             >

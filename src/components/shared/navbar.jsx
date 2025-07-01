@@ -24,6 +24,7 @@ import useBoolean from "@/hooks/use-boolean";
 
 import { ThemeToggle } from "../theme/theme-toggle";
 import { logout, useCurrentUser } from "@/store/slices/authSlice";
+import { useCurrentCart } from "@/store/slices/cartSlice";
 
 const navigationLinks = [
   { name: "Home", path: "/" },
@@ -90,6 +91,8 @@ const Navbar = () => {
 
   const currentUser = useSelector(useCurrentUser)?.user;
 
+  const cartProducts = useSelector(useCurrentCart).items;
+
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
 
   const handleLogout = async () => {
@@ -147,13 +150,13 @@ const Navbar = () => {
               </Button>
             )}
 
-            <Link
+            {/* <Link
               to="/wishlist"
               className="flex text-white hover:text-black items-center space-x-1"
             >
               <Heart className="w-4 h-4" />
               <span>Wishlist</span>
-            </Link>
+            </Link> */}
           </div>
         </div>
 
@@ -228,7 +231,7 @@ const Navbar = () => {
                   variant="destructive"
                   className="absolute -top-3 -right-3 h-5 w-5 text-sm flex items-center justify-center"
                 >
-                  3
+                  {cartProducts.length}
                 </Badge>
               </Link>
 
