@@ -22,6 +22,7 @@ import {
 
 import { clearCart, useCurrentCart } from "@/store/slices/cartSlice";
 import { useCreateOrderMutation } from "@/store/features/ordersApi";
+import { useCurrentUser } from "@/store/slices/authSlice";
 
 // --- Yup Validation Schema for Shipping Address ---
 const shippingSchema = yup.object().shape({
@@ -50,6 +51,8 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
+
+  const currentUser = useSelector(useCurrentUser)?.user;
 
   const cartProducts = useSelector(useCurrentCart);
 
@@ -132,6 +135,27 @@ const CheckoutPage = () => {
           Back to Cart
         </Link>
         <h1 className="text-3xl font-bold">Checkout</h1>
+      </div>
+
+      <div className="mb-6">
+        <div className="flex items-center justify-center bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg shadow-sm">
+          <svg
+            className="w-5 h-5 mr-2 text-red-500 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z"
+            />
+          </svg>
+          <span className="font-semibold">
+            Please log in first to confirm your order!
+          </span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -345,7 +369,7 @@ const CheckoutPage = () => {
                     type="submit"
                     className="w-full mt-6"
                     size="lg"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !currentUser}
                   >
                     {isSubmitting ? "Placing Order..." : "Place Order"}
                   </Button>

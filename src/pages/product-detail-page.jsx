@@ -24,6 +24,7 @@ import { ServicesSection } from "@/components/sections";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/store/slices/cartSlice";
 import { toast } from "sonner";
+import ProductDetailsSkeleton from "@/components/skeleton/product-details-skeleton";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  const { data: currentProduct } = useGetProductQuery(id);
+  const { data: currentProduct, isLoading } = useGetProductQuery(id);
 
   // Mock product data - in real app, fetch by ID
 
@@ -70,6 +71,10 @@ const ProductDetailPage = () => {
         currentProduct?.data?.images?.length
     );
   };
+
+  if (isLoading) {
+    return <ProductDetailsSkeleton />;
+  }
 
   return (
     <>
@@ -139,16 +144,6 @@ const ProductDetailPage = () => {
 
           {/* Product Info */}
           <div className="space-y-6">
-            {/* Badges */}
-            {/* <div className="flex items-center space-x-2">
-              {product.isNew && (
-                <Badge className="bg-green-500 text-white">New</Badge>
-              )}
-              {product.discount > 0 && (
-                <Badge variant="destructive">-{product.discount}% OFF</Badge>
-              )}
-            </div> */}
-
             {/* Product Name */}
             <h1 className="text-3xl font-bold text-primary">
               {currentProduct?.data?.title}
@@ -204,20 +199,6 @@ const ProductDetailPage = () => {
                 />
               </>
             )}
-
-            {/* Stock Status */}
-            {/* <div className="flex items-center space-x-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  product.inStock ? "bg-green-500" : "bg-red-500"
-                }`}
-              ></div>
-              <span className="text-sm">
-                {product.inStock
-                  ? `${product.stockCount} in stock`
-                  : "Out of stock"}
-              </span>
-            </div> */}
 
             {/* Quantity */}
             <div className="flex items-center space-x-4">
@@ -277,7 +258,6 @@ const ProductDetailPage = () => {
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="features">Features</TabsTrigger>
               <TabsTrigger value="specifications">Specifications</TabsTrigger>
-              {/* <TabsTrigger value="reviews">Reviews</TabsTrigger> */}
             </TabsList>
 
             <TabsContent value="description" className="mt-6">
@@ -315,12 +295,6 @@ const ProductDetailPage = () => {
                 )}
               </Card>
             </TabsContent>
-
-            {/* <TabsContent value="reviews" className="mt-6">
-            <Card className="p-6">
-              <p className="text-gray-600">Reviews coming soon...</p>
-            </Card>
-          </TabsContent> */}
           </Tabs>
         </div>
       </div>

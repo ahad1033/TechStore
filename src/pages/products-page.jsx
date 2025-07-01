@@ -17,8 +17,13 @@ import {
 import { useGetProductsQuery } from "@/store/features/productsApi";
 import { useGetCategoriesQuery } from "@/store/features/categoriesApi";
 import FeaturedProductSkeletonCard from "@/components/skeleton/featured-product-skeleton";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/store/slices/cartSlice";
+import { toast } from "sonner";
 
 const ProductsPage = () => {
+  const dispatch = useDispatch();
+
   const [viewMode, setViewMode] = useState("grid");
 
   const [page, setPage] = useState(1);
@@ -62,10 +67,20 @@ const ProductsPage = () => {
     setPage(1);
   };
 
-  const handleAddToCart = (productId) => {
-    console.log("Adding product to cart:", productId);
+  const handleAddToCart = (cartProduct) => {
+    const productToAdd = {
+      product: cartProduct,
+      price:
+        cartProduct?.discountPrice > 0
+          ? cartProduct?.discountPrice
+          : cartProduct?.regularPrice,
+    };
+    dispatch(addToCart(productToAdd));
+
+    toast.success(`${cartProduct?.title} added successfylly in the cart`);
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleAddToWishlist = (productId) => {
     console.log("Adding product to wishlist:", productId);
   };
@@ -184,6 +199,7 @@ const ProductsPage = () => {
                 >
                   <Grid className="w-4 h-4" />
                 </Button>
+
                 <Button
                   variant={viewMode === "list" ? "default" : "outline"}
                   size="sm"
@@ -213,11 +229,13 @@ const ProductsPage = () => {
                     >
                       {/* Product Image */}
                       <div className="relative aspect-square overflow-hidden">
-                        <img
-                          src={product.images[0]}
-                          alt={product.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
+                        <Link to={`/products/${product.id}`}>
+                          <img
+                            src={product.images[0]}
+                            alt={product.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                        </Link>
 
                         {/* Badges */}
                         <div className="absolute top-3 left-3 flex flex-col gap-2">
@@ -232,28 +250,31 @@ const ProductsPage = () => {
 
                         {/* Action Buttons */}
                         <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <Button
+                          {/* <Button
                             size="sm"
                             variant="secondary"
                             className="w-8 h-8 p-0 rounded-full"
                             onClick={() => handleAddToWishlist(product.id)}
                           >
                             <Heart className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            className="w-8 h-8 p-0 rounded-full"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
+                          </Button> */}
+
+                          <Link to={`/products/${product.id}`}>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="w-8 h-8 p-0 rounded-full"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                          </Link>
                         </div>
 
                         {/* Quick Add to Cart */}
                         <div className="absolute bottom-0 left-0 right-0 bg-white/20 backdrop-blur-sm p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                           <Button
                             className="w-full"
-                            onClick={() => handleAddToCart(product.id)}
+                            onClick={() => handleAddToCart(product)}
                           >
                             <ShoppingCart className="w-4 h-4 mr-2" />
                             Add to Cart

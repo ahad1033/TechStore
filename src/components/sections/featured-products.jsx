@@ -35,6 +35,7 @@ const FeaturedProducts = () => {
     toast.success(`${cartProduct?.title} added successfylly in the cart`);
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleAddToWishlist = (productId) => {
     // TODO: Implement add to wishlist functionality
     console.log("Adding product to wishlist:", productId);
@@ -68,11 +69,13 @@ const FeaturedProducts = () => {
                 >
                   {/* Product Image */}
                   <div className="relative aspect-square overflow-hidden">
-                    <img
-                      src={product.images[0]}
-                      alt={product.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
+                    <Link to={`/products/${product.id}`}>
+                      <img
+                        src={product.images[0]}
+                        alt={product.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </Link>
 
                     {/* Badges */}
                     <div className="absolute top-3 left-3 flex flex-col gap-2">
@@ -87,21 +90,24 @@ const FeaturedProducts = () => {
 
                     {/* Action Buttons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <Button
+                      {/* <Button
                         size="sm"
                         variant="secondary"
                         className="w-8 h-8 p-0 rounded-full"
                         onClick={() => handleAddToWishlist(product.id)}
                       >
                         <Heart className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="w-8 h-8 p-0 rounded-full"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
+                      </Button> */}
+
+                      <Link to={`/products/${product.id}`}>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="w-8 h-8 p-0 rounded-full"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </Link>
                     </div>
 
                     {/* Quick Add to Cart */}
