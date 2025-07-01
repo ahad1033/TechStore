@@ -5,7 +5,6 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import {
-  Star,
   ShoppingCart,
   Heart,
   Filter,
@@ -13,11 +12,19 @@ import {
   List,
   ChevronLeft,
   ChevronRight,
+  Eye,
 } from "lucide-react";
+import { useGetProductsQuery } from "@/store/features/productsApi";
+import { useGetCategoriesQuery } from "@/store/features/categoriesApi";
+import FeaturedProductSkeletonCard from "@/components/skeleton/featured-product-skeleton";
 
 const ProductsPage = () => {
   const [viewMode, setViewMode] = useState("grid");
-  const [currentPage, setCurrentPage] = useState(1);
+
+  const [page, setPage] = useState(1);
+
+  const limit = 8;
+
   const [filters, setFilters] = useState({
     category: "",
     priceRange: "",
@@ -25,143 +32,34 @@ const ProductsPage = () => {
     search: "",
   });
 
-  const products = [
-    {
-      id: 1,
-      name: "iPhone 15 Pro Max",
-      price: 1199,
-      originalPrice: 1399,
-      image:
-        "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop",
-      category: "Smartphones",
-      rating: 4.8,
-      reviews: 1247,
-      discount: 14,
-      isNew: true,
-    },
-    {
-      id: 2,
-      name: "Sony WH-1000XM5",
-      price: 349,
-      originalPrice: 399,
-      image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
-      category: "Audio",
-      rating: 4.9,
-      reviews: 892,
-      discount: 12,
-      isNew: false,
-    },
-    {
-      id: 3,
-      name: "MacBook Air M2",
-      price: 1199,
-      originalPrice: 1299,
-      image:
-        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop",
-      category: "Laptops",
-      rating: 4.7,
-      reviews: 567,
-      discount: 8,
-      isNew: false,
-    },
-    {
-      id: 4,
-      name: "Samsung Galaxy S24 Ultra",
-      price: 1299,
-      originalPrice: 1499,
-      image:
-        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop",
-      category: "Smartphones",
-      rating: 4.6,
-      reviews: 743,
-      discount: 13,
-      isNew: true,
-    },
-    {
-      id: 5,
-      name: "AirPods Pro 2nd Gen",
-      price: 249,
-      originalPrice: 279,
-      image:
-        "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop",
-      category: "Audio",
-      rating: 4.5,
-      reviews: 1023,
-      discount: 11,
-      isNew: false,
-    },
-    {
-      id: 6,
-      name: 'iPad Pro 12.9"',
-      price: 1099,
-      originalPrice: 1199,
-      image:
-        "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop",
-      category: "Tablets",
-      rating: 4.8,
-      reviews: 456,
-      discount: 8,
-      isNew: false,
-    },
-    {
-      id: 7,
-      name: "PlayStation 5",
-      price: 499,
-      originalPrice: 599,
-      image:
-        "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop",
-      category: "Gaming",
-      rating: 4.9,
-      reviews: 2341,
-      discount: 17,
-      isNew: false,
-    },
-    {
-      id: 8,
-      name: "Canon EOS R6 Mark II",
-      price: 2499,
-      originalPrice: 2799,
-      image:
-        "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=400&fit=crop",
-      category: "Photography",
-      rating: 4.7,
-      reviews: 189,
-      discount: 11,
-      isNew: true,
-    },
-  ];
+  const { data: products, isLoading } = useGetProductsQuery({
+    page,
+    limit,
+    search: filters.search,
+    categoryId: filters.category,
+  });
 
-  const categories = [
-    "All",
-    "Smartphones",
-    "Laptops",
-    "Audio",
-    "Gaming",
-    "Photography",
-    "Tablets",
-  ];
-  const priceRanges = [
-    "All",
-    "Under $100",
-    "$100 - $500",
-    "$500 - $1000",
-    "Over $1000",
-  ];
-  const ratings = ["All", "4+ Stars", "3+ Stars", "2+ Stars"];
+  const { data: categories } = useGetCategoriesQuery({ page: 1, limit: 50 });
 
-  const itemsPerPage = 8;
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentProducts = products.slice(startIndex, endIndex);
+  // const priceRanges = [
+  //   "All",
+  //   "Under $100",
+  //   "$100 - $500",
+  //   "$500 - $1000",
+  //   "Over $1000",
+  // ];
+
+  const totalPages = products?.meta?.totalPages;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const currentProducts = products?.data;
 
   const handleFilterChange = (filterType, value) => {
     setFilters((prev) => ({
       ...prev,
       [filterType]: value,
     }));
-    setCurrentPage(1);
+    setPage(1);
   };
 
   const handleAddToCart = (productId) => {
@@ -173,7 +71,7 @@ const ProductsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
@@ -188,15 +86,15 @@ const ProductsPage = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
           <div className="lg:w-64 space-y-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+            <div className="rounded-lg shadow-sm p-6">
+              <h3 className="font-semibold mb-4 flex items-center">
                 <Filter className="w-4 h-4 mr-2" />
                 Filters
               </h3>
 
               {/* Search */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-muted-foreground mb-2">
                   Search
                 </label>
                 <Input
@@ -208,7 +106,7 @@ const ProductsPage = () => {
 
               {/* Category Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Category
                 </label>
                 <select
@@ -218,19 +116,20 @@ const ProductsPage = () => {
                   }
                   className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
+                  {categories?.data?.map((category) => (
+                    <option key={category?.id} value={category?.id}>
+                      {category?.name}
                     </option>
                   ))}
                 </select>
               </div>
 
               {/* Price Range Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              {/* <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">
                   Price Range
                 </label>
+
                 <select
                   value={filters.priceRange}
                   onChange={(e) =>
@@ -244,25 +143,7 @@ const ProductsPage = () => {
                     </option>
                   ))}
                 </select>
-              </div>
-
-              {/* Rating Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Rating
-                </label>
-                <select
-                  value={filters.rating}
-                  onChange={(e) => handleFilterChange("rating", e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
-                  {ratings.map((rating) => (
-                    <option key={rating} value={rating}>
-                      {rating}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              </div> */}
 
               {/* Clear Filters */}
               <Button
@@ -288,8 +169,9 @@ const ProductsPage = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
               <div className="mb-4 sm:mb-0">
                 <p className="text-gray-600">
-                  Showing {startIndex + 1}-{Math.min(endIndex, products.length)}{" "}
-                  of {products.length} products
+                  Showing {startIndex + 1}-
+                  {Math.min(endIndex, products?.meta?.total)} of{" "}
+                  {products?.meta?.total} products
                 </p>
               </div>
 
@@ -316,105 +198,125 @@ const ProductsPage = () => {
             <div
               className={`grid gap-6 ${
                 viewMode === "grid"
-                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                  ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                   : "grid-cols-1"
               }`}
             >
-              {currentProducts.map((product) => (
-                <Card
-                  key={product.id}
-                  className="group overflow-hidden hover:shadow-lg transition-shadow duration-300"
-                >
-                  {/* Product Image */}
-                  <div className="relative aspect-square overflow-hidden">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
+              {isLoading
+                ? Array.from({ length: 10 }).map((_, index) => (
+                    <FeaturedProductSkeletonCard key={index} />
+                  ))
+                : currentProducts?.map((product) => (
+                    <Card
+                      key={product.id}
+                      className="group overflow-hidden hover:shadow-lg transition-all duration-300 pt-0 pb-2 dark:bg-background/10 border-black/10 dark:border-white/5"
+                    >
+                      {/* Product Image */}
+                      <div className="relative aspect-square overflow-hidden">
+                        <img
+                          src={product.images[0]}
+                          alt={product.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
 
-                    {/* Badges */}
-                    <div className="absolute top-3 left-3 flex flex-col gap-2">
-                      {product.isNew && (
-                        <Badge className="bg-green-500 text-white">New</Badge>
-                      )}
-                      {product.discount > 0 && (
-                        <Badge variant="destructive">
-                          -{product.discount}%
+                        {/* Badges */}
+                        <div className="absolute top-3 left-3 flex flex-col gap-2">
+                          {product.discountPrice > 0 && (
+                            <Badge>
+                              Save $
+                              {Number(product.regularPrice) -
+                                Number(product.discountPrice)}
+                            </Badge>
+                          )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="w-8 h-8 p-0 rounded-full"
+                            onClick={() => handleAddToWishlist(product.id)}
+                          >
+                            <Heart className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="w-8 h-8 p-0 rounded-full"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </div>
+
+                        {/* Quick Add to Cart */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-white/20 backdrop-blur-sm p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                          <Button
+                            className="w-full"
+                            onClick={() => handleAddToCart(product.id)}
+                          >
+                            <ShoppingCart className="w-4 h-4 mr-2" />
+                            Add to Cart
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="px-4">
+                        <Badge
+                          className="border border-primary text-primary mb-2"
+                          variant="ghost"
+                        >
+                          {product?.categoryId?.name}
                         </Badge>
-                      )}
-                    </div>
 
-                    {/* Action Buttons */}
-                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="w-8 h-8 p-0 rounded-full"
-                        onClick={() => handleAddToWishlist(product.id)}
-                      >
-                        <Heart className="w-4 h-4" />
-                      </Button>
-                    </div>
+                        {/* Product Name */}
+                        <Link to={`/products/${product.id}`}>
+                          <h3 className="font-semibold text-sm mb-2 group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                            {product.title}
+                          </h3>
+                        </Link>
+
+                        {/* Rating */}
+                        {/* <div className="flex items-center space-x-2 mb-3">
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < Math.floor(product.rating)
+                            ? "text-yellow-400 fill-current"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
                   </div>
+                  <span className="text-sm text-gray-600">
+                    ({product.reviews})
+                  </span>
+                </div> */}
 
-                  {/* Product Info */}
-                  <div className="p-4">
-                    {/* Category */}
-                    <p className="text-sm text-gray-500 mb-2">
-                      {product.category}
-                    </p>
-
-                    {/* Product Name */}
-                    <Link to={`/products/${product.id}`}>
-                      <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors duration-200 line-clamp-2">
-                        {product.name}
-                      </h3>
-                    </Link>
-
-                    {/* Rating */}
-                    <div className="flex items-center space-x-2 mb-3">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < Math.floor(product.rating)
-                                ? "text-yellow-400 fill-current"
-                                : "text-gray-300"
-                            }`}
-                          />
-                        ))}
+                        {/* Price */}
+                        <div className="flex items-center space-x-2">
+                          {product.discountPrice &&
+                          Number(product.discountPrice) <
+                            Number(product.regularPrice) ? (
+                            <>
+                              <span className="text-xl font-bold text-primary">
+                                ${product.discountPrice}
+                              </span>
+                              <span className="text-lg text-gray-400 line-through">
+                                ${product.regularPrice}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-xl font-bold text-primary">
+                              ${product.regularPrice}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <span className="text-sm text-gray-600">
-                        ({product.reviews})
-                      </span>
-                    </div>
-
-                    {/* Price */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-xl font-bold text-primary">
-                          ${product.price}
-                        </span>
-                        {product.originalPrice > product.price && (
-                          <span className="text-lg text-gray-400 line-through">
-                            ${product.originalPrice}
-                          </span>
-                        )}
-                      </div>
-
-                      <Button
-                        size="sm"
-                        onClick={() => handleAddToCart(product.id)}
-                      >
-                        <ShoppingCart className="w-4 h-4 mr-1" />
-                        Add
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                    </Card>
+                  ))}
             </div>
 
             {/* Pagination */}
@@ -423,10 +325,8 @@ const ProductsPage = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={currentPage === 1}
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={page === 1}
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Previous
@@ -435,9 +335,9 @@ const ProductsPage = () => {
                 {[...Array(totalPages)].map((_, i) => (
                   <Button
                     key={i + 1}
-                    variant={currentPage === i + 1 ? "default" : "outline"}
+                    variant={page === i + 1 ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setCurrentPage(i + 1)}
+                    onClick={() => setPage(i + 1)}
                   >
                     {i + 1}
                   </Button>
@@ -447,9 +347,9 @@ const ProductsPage = () => {
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    setPage((prev) => Math.min(prev + 1, totalPages))
                   }
-                  disabled={currentPage === totalPages}
+                  disabled={page === totalPages}
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />

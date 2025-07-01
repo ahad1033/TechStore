@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { toast } from "sonner";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -12,7 +13,6 @@ import { Button } from "../../components/ui/button";
 import { verifyToken } from "@/utils/verify-token";
 import { setUser } from "@/store/slices/authSlice";
 import { useLoginMutation } from "@/store/slices/authApi";
-import { toast } from "sonner";
 
 // ----------------------------------------------------------------------
 
@@ -55,6 +55,88 @@ const LoginPage = () => {
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       const response = await login(data).unwrap();
+
+      if (!response.success) {
+        toast.error(
+          response.message || "Something went wrong! Please try again."
+        );
+      }
+
+      if (response.success) {
+        const user = await verifyToken(response?.data?.accessToken);
+
+        dispatch(setUser({ user, token: response?.data?.accessToken }));
+
+        toast.success(response.message || "Logged in successfully!");
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        navigate("/", { replace: true });
+
+        reset();
+      }
+    } catch (error) {
+      toast.error(
+        error?.data.error || "Something went wrong! Please try again."
+      );
+      console.error("Login error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const userLogin = async () => {
+    setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      const userData = {
+        email: "user@gmail.com",
+        password: "User1234!",
+      };
+
+      const response = await login(userData).unwrap();
+
+      if (!response.success) {
+        toast.error(
+          response.message || "Something went wrong! Please try again."
+        );
+      }
+
+      if (response.success) {
+        const user = await verifyToken(response?.data?.accessToken);
+
+        dispatch(setUser({ user, token: response?.data?.accessToken }));
+
+        toast.success(response.message || "Logged in successfully!");
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        navigate("/", { replace: true });
+
+        reset();
+      }
+    } catch (error) {
+      toast.error(
+        error?.data.error || "Something went wrong! Please try again."
+      );
+      console.error("Login error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const adminLogin = async () => {
+    setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      const userData = {
+        email: "admin@techstore.com",
+        password: "techStore1033**!!",
+      };
+
+      const response = await login(userData).unwrap();
 
       if (!response.success) {
         toast.error(
@@ -172,12 +254,7 @@ const LoginPage = () => {
             </div> */}
 
             {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full"
-              size="lg"
-            >
+            <Button className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 "Signing in..."
               ) : (
@@ -188,6 +265,38 @@ const LoginPage = () => {
               )}
             </Button>
           </form>
+
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <Button
+              className="w-full"
+              onClick={userLogin}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                "Signing in..."
+              ) : (
+                <>
+                  Sign In As User
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </>
+              )}
+            </Button>
+
+            <Button
+              className="w-full"
+              onClick={adminLogin}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                "Signing in..."
+              ) : (
+                <>
+                  Sign In As Admin
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </>
+              )}
+            </Button>
+          </div>
 
           {/* Divider */}
           {/* <div className="mt-6">

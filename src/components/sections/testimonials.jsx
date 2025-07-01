@@ -97,7 +97,7 @@ const Testimonials = () => {
           {testimonials.map((testimonial) => (
             <Card
               key={testimonial.id}
-              className="p-6 hover:shadow-lg transition-shadow duration-300"
+              className="p-6 hover:shadow-lg transition-shadow duration-300 dark:bg-white/5 border-black/10 dark:border-white/5"
             >
               {/* Quote Icon */}
               <div className="mb-4">
