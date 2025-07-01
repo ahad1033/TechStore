@@ -25,7 +25,11 @@ const ContactPage = () => {
         .required("Email is required"),
       phone: yup
         .string()
-        .matches(/^[\+]?[1-9][\d]{0,15}$/, "Please enter a valid phone number"),
+        .matches(
+          /^(013|014|015|016|017|018|019)\d{8}$/,
+          "Please enter a valid Bangladeshi phone number (11 digits)"
+        )
+        .required("Phone number is required"),
       subject: yup
         .string()
         .min(5, "Subject must be at least 5 characters")
@@ -63,13 +67,13 @@ const ContactPage = () => {
     {
       icon: <Phone className="w-6 h-6" />,
       title: "Phone",
-      content: "+1 (555) 123-4567",
+      content: "01636428995",
       subtitle: "Mon-Fri from 8am to 6pm",
     },
     {
       icon: <MapPin className="w-6 h-6" />,
       title: "Office",
-      content: "123 Tech Street, Digital City, DC 12345",
+      content: "365 Mobarokshah Road Narayanganj",
       subtitle: "Visit us anytime",
     },
     {
@@ -87,10 +91,10 @@ const ContactPage = () => {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Send className="w-8 h-8 text-green-600" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold  mb-4">
             Message Sent Successfully!
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-muted-foreground mb-8">
             Thank you for contacting us. We'll get back to you within 24 hours.
           </p>
           <Button onClick={() => window.location.reload()}>
@@ -102,25 +106,25 @@ const ContactPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8">
+      <div className="container">
         {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center section-padding">
+          <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
             Get in Touch
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Have a question or need help? We'd love to hear from you. Send us a
             message and we'll respond as soon as possible.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 section-padding">
           {/* Contact Form */}
           <Card className="p-8">
             <div className="flex items-center space-x-2 mb-6">
               <MessageSquare className="w-6 h-6 text-primary" />
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-primary">
                 Send us a Message
               </h2>
             </div>
@@ -129,7 +133,7 @@ const ContactPage = () => {
               {/* Name Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium  mb-2">
                     First Name *
                   </label>
                   <Input
@@ -144,7 +148,7 @@ const ContactPage = () => {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium  mb-2">
                     Last Name *
                   </label>
                   <Input
@@ -162,7 +166,7 @@ const ContactPage = () => {
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Email Address *
                 </label>
                 <Input
@@ -180,7 +184,7 @@ const ContactPage = () => {
 
               {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Phone Number
                 </label>
                 <Input
@@ -197,7 +201,7 @@ const ContactPage = () => {
 
               {/* Subject */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Subject *
                 </label>
                 <Input
@@ -214,7 +218,7 @@ const ContactPage = () => {
 
               {/* Message */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Message *
                 </label>
                 <Textarea
@@ -252,10 +256,10 @@ const ContactPage = () => {
           {/* Contact Information */}
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              <h2 className="text-2xl font-bold  mb-6">
                 Contact Information
               </h2>
-              <p className="text-gray-600 mb-8">
+              <p className="text-muted-foreground mb-8">
                 Reach out to us through any of these channels. We're here to
                 help with any questions about our products or services.
               </p>
@@ -269,13 +273,13 @@ const ContactPage = () => {
                       {info.icon}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">
+                      <h3 className="font-semibold ">
                         {info.title}
                       </h3>
-                      <p className="text-gray-900 font-medium">
+                      <p className=" font-medium">
                         {info.content}
                       </p>
-                      <p className="text-sm text-gray-600">{info.subtitle}</p>
+                      <p className="text-sm text-muted-foreground">{info.subtitle}</p>
                     </div>
                   </div>
                 </Card>
@@ -284,33 +288,33 @@ const ContactPage = () => {
 
             {/* FAQ Section */}
             <Card className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">
+              <h3 className="font-semibold text-lg mb-4">
                 Frequently Asked Questions
               </h3>
               <div className="space-y-3">
                 <div>
-                  <h4 className="font-medium text-gray-900">
+                  <h4 className="font-medium ">
                     What are your shipping options?
                   </h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     We offer free shipping on orders over $50 and express
                     shipping for urgent orders.
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">
+                  <h4 className="font-medium ">
                     What is your return policy?
                   </h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     We offer a 30-day return policy for all unused items in
                     original packaging.
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">
+                  <h4 className="font-medium ">
                     Do you offer technical support?
                   </h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     Yes, we provide technical support for all products purchased
                     from our store.
                   </p>

@@ -1,8 +1,10 @@
+import { toast } from "sonner";
 import React, { useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+
 import { Card } from "../ui/card";
-import { Mail, Gift, Shield, ArrowRight, CheckCircle } from "lucide-react";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Mail, Gift, Shield, ArrowRight } from "lucide-react";
 
 const NewsletterSignup = () => {
   const [email, setEmail] = useState("");
@@ -10,13 +12,19 @@ const NewsletterSignup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!email) return;
 
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Newsletter signup:", email);
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    toast.success(
+      `Thanks for signed up with ${email} to get our latest updates!`
+    );
+
     setEmail("");
+
     setIsSubmitting(false);
   };
 

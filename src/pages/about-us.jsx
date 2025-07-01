@@ -18,19 +18,16 @@ const AboutUs = () => {
   return (
     <section className="relative overflow-hidden">
       {/* Hero-like About Section */}
-      <div className="bg-gradient-to-br from-background to-primary/5">
+      <div className="">
         <div className="container section-padding text-center">
-          <Badge
-            variant="secondary"
-            className="inline-flex items-center space-x-2 px-4 py-2 border border-primary rounded-full mb-6"
-          >
+          <Badge className="inline-flex items-center space-x-2 px-4 py-2 border border-primary rounded-full mb-6">
             <Lightbulb className="w-4 h-4" />
             <span>Our Story</span>
           </Badge>
-          <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+          <h1 className="text-4xl lg:text-6xl font-bold  leading-tight mb-6">
             Innovating the Future of Tech Retail
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10">
+          <p className="text-xl max-w-3xl mx-auto mb-10">
             At TechStore, we believe in bringing the latest and greatest
             technology directly to your fingertips. Founded on a passion for
             innovation and a commitment to quality, we strive to be your trusted
@@ -57,20 +54,20 @@ const AboutUs = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Mission */}
           <div className="space-y-6">
-            <Badge variant="secondary" className="mb-4 px-3 py-1">
+            <Badge variant="" className="mb-4 px-3 py-1">
               Our Mission
             </Badge>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl lg:text-4xl font-bold ">
               Empowering Your Digital Life
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-muted-foreground">
               Our mission is to provide a seamless and enjoyable shopping
               experience for tech enthusiasts and everyday users alike. We
               curate a diverse range of high-quality products, ensuring you have
               access to the best technology that enhances your life, work, and
               play.
             </p>
-            <ul className="space-y-3 text-gray-700">
+            <ul className="space-y-3">
               <li className="flex items-center">
                 <ShieldCheck className="w-5 h-5 text-primary mr-2" />
                 <span>Quality Assurance on Every Product</span>
@@ -87,7 +84,7 @@ const AboutUs = () => {
           </div>
 
           {/* Vision Image/Placeholder */}
-          <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden shadow-xl">
+          <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl">
             <img
               src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=1470&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="Our Vision"
@@ -105,7 +102,7 @@ const AboutUs = () => {
       {/* Why Choose Us Section */}
       <div className="bg-gradient-to-tr from-background to-secondary/5">
         <div className="container section-padding text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             Why Choose TechStore?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">
@@ -119,7 +116,7 @@ const AboutUs = () => {
                 <Award className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Premium Selection</h3>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Handpicked products from leading brands, ensuring top-tier
                 quality and performance.
               </p>
@@ -129,7 +126,7 @@ const AboutUs = () => {
                 <Users className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Expert Support</h3>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Our knowledgeable team is always ready to assist you with any
                 questions or concerns.
               </p>
@@ -139,7 +136,7 @@ const AboutUs = () => {
                 <Rocket className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Fast & Secure</h3>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Enjoy quick delivery and secure transactions for a worry-free
                 shopping experience.
               </p>
@@ -150,7 +147,7 @@ const AboutUs = () => {
 
       {/* Call to Action */}
       <div className="container section-padding text-center">
-        <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+        <h2 className="text-3xl lg:text-4xl font-bold mb-4">
           Ready to Explore?
         </h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
