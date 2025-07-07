@@ -13,6 +13,7 @@ import { Button } from "../ui/button";
 import { addToCart } from "@/store/slices/cartSlice";
 
 import FeaturedProductSkeletonCard from "../skeleton/featured-product-skeleton";
+import SectionHeading from "../shared/section-heading";
 
 const FeaturedProducts = () => {
   const dispatch = useDispatch();
@@ -44,17 +45,12 @@ const FeaturedProducts = () => {
   return (
     <section className="container section-padding">
       <div>
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <Badge className="mb-4 px-2 py-1">Featured Collection</Badge>
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Featured Products
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover our handpicked selection of premium products that combine
-            innovation, quality, and exceptional value.
-          </p>
-        </div>
+        <SectionHeading
+          title="Featured Products"
+          subtitle="Discover our handpicked selection of premium products that combine
+            innovation, quality, and exceptional value."
+          badge="Featured Collection"
+        />
 
         {/* Products Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -90,15 +86,6 @@ const FeaturedProducts = () => {
 
                     {/* Action Buttons */}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {/* <Button
-                        size="sm"
-                        variant="secondary"
-                        className="w-8 h-8 p-0 rounded-full"
-                        onClick={() => handleAddToWishlist(product.id)}
-                      >
-                        <Heart className="w-4 h-4" />
-                      </Button> */}
-
                       <Link to={`/products/${product.id}`}>
                         <Button
                           size="sm"

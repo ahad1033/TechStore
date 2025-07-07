@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useGetCategoriesQuery } from "@/store/features/categoriesApi";
 import CategoryCardSkeleton from "../skeleton/category-card-skeleton";
+import SectionHeading from "../shared/section-heading";
 
 const ProductCategories = () => {
   const { data: categories, isLoading } = useGetCategoriesQuery({
@@ -25,17 +26,11 @@ const ProductCategories = () => {
   return (
     <section className="">
       <div className="container section-padding">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Shop by Category
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover our wide range of technology products organized by
-            category. Find exactly what you're looking for with our curated
-            collections.
-          </p>
-        </div>
+        <SectionHeading
+          title="Shop by Category"
+          subtitle="Discover our wide range of technology products organized by category.
+        Find exactly what you're looking for with our curated collections."
+        />
 
         {/* Categories Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">

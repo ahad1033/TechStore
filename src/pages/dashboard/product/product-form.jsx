@@ -65,10 +65,8 @@ const ProductForm = () => {
       .string()
       .required("Product description is required")
       .min(10, "Description must be at least 10 characters"),
-    features: yup
-      .string(),
-    specifications: yup
-      .string(),
+    features: yup.string(),
+    specifications: yup.string(),
     regularPrice: yup
       .number()
       .typeError("Regular price must be a number")
@@ -162,9 +160,9 @@ const ProductForm = () => {
         specifications: initialData.specifications || "",
         regularPrice: initialData.regularPrice || "",
         discountPrice: initialData.discountPrice || "",
-        images: undefined, // File input should always be undefined for reset
+        images: undefined,
       });
-      // Set initial image previews from existing image URLs
+
       setImagePreviews(initialData.images || []);
     } else {
       // Reset for create mode
@@ -186,20 +184,16 @@ const ProductForm = () => {
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files);
     if (files.length > 0) {
-      // Limit to 4 images
       const limitedFiles = files.slice(0, 4 - imagePreviews.length);
 
       const newPreviews = limitedFiles.map((file) => URL.createObjectURL(file));
       setImagePreviews((prev) => [...prev, ...newPreviews]);
-      // Update react-hook-form's state with the actual File objects
       setValue(
         "images",
         [...(form.getValues("images") || []), ...limitedFiles],
         { shouldValidate: true }
       );
     } else {
-      // If user clears the input, clear only the newly selected files
-      // Keep existing images from initialData
       const existingImages = isEdit ? initialData?.images || [] : [];
       setImagePreviews(existingImages);
       setValue("images", existingImages, { shouldValidate: true });
@@ -211,7 +205,6 @@ const ProductForm = () => {
       prev.filter((_, index) => index !== indexToRemove)
     );
 
-    // Also update the form's 'images' field
     const currentFiles = form.getValues("images") || [];
     const updatedFiles = currentFiles.filter(
       (_, index) => index !== indexToRemove
@@ -223,17 +216,14 @@ const ProductForm = () => {
     setIsUploadingImages(true);
     let uploadedImageUrls = [];
 
-    // Filter out existing URLs from new files to upload
     const filesToUpload = data.images.filter((file) => file instanceof File);
     const existingImageUrls = data.images.filter(
       (url) => typeof url === "string"
     );
 
-    // If in edit mode and no new files are selected, but there are existing images, use them
     if (isEdit && filesToUpload.length === 0 && existingImageUrls.length > 0) {
       uploadedImageUrls = existingImageUrls;
     } else {
-      // Upload new files
       for (const file of filesToUpload) {
         const formData = new FormData();
         formData.append("image", file);
@@ -259,10 +249,9 @@ const ProductForm = () => {
           console.error("Error uploading image to ImgBB:", error);
           toast.error("Failed to upload image: " + error.message);
           setIsUploadingImages(false);
-          return; // Stop submission if any image upload fails
+          return;
         }
       }
-      // Combine newly uploaded URLs with existing ones (if any)
       uploadedImageUrls = [...existingImageUrls, ...uploadedImageUrls];
     }
 
