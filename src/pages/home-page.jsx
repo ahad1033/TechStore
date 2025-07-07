@@ -2,7 +2,6 @@ import {
   HeroSection,
   StatSection,
   Testimonials,
-  ServicesSection,
   FeaturedProducts,
   NewsletterSignup,
   ProductCategories,
@@ -17,7 +16,6 @@ const HomePage = () => {
       <Testimonials />
       <StatSection />
       <NewsletterSignup />
-      <ServicesSection />
     </>
   );
 };

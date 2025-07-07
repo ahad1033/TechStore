@@ -49,33 +49,25 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-900 text-white mt-6 md:mt-8 lg:mt-10">
       <div className="container footer-padding">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Company Info */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">
-                  T
-                </span>
-              </div>
-              <span className="text-xl font-bold">TechStore</span>
+            <div className="mb-4">
+              <img
+                src="/techstore-logo.webp"
+                alt="TechStore"
+                className="w-50 lg:w-60"
+              />
             </div>
-            <p className="text-gray-400 mb-6 max-w-md">
+
+            <p className="text-gray-400 mb-6 max-w-md text-sm">
               Your one-stop destination for the latest technology products. We
               offer premium electronics, audio equipment, gaming gear, and
               photography essentials with exceptional customer service.
             </p>
 
-            {/* Contact Info */}
             <div className="space-y-3">
-              <div className="flex items-center space-x-3 text-gray-400">
-                <MapPin className="w-4 h-4" />
-                <span className="text-sm">
-                  365 Mobarokshah Road, Narayanganj
-                </span>
-              </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <Phone className="w-4 h-4" />
                 <span className="text-sm">01636428995</span>
@@ -87,7 +79,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-lg mb-4">Company</h3>
             <ul className="space-y-2">
@@ -137,30 +128,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Newsletter Section */}
-        {/* <div className="border-t border-gray-800 mt-12 pt-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Stay Updated</h3>
-              <p className="text-gray-400">
-                Subscribe to our newsletter for the latest products, exclusive
-                offers, and tech news.
-              </p>
-            </div>
-            <div className="flex space-x-2">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-primary"
-              />
-              <Button className="bg-primary hover:bg-primary/90">
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div> */}
-
-        {/* Bottom Section */}
         <div className="border-t border-gray-800 mt-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-gray-400 text-sm">
@@ -168,7 +135,6 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center space-x-6">
-              {/* Social Links */}
               <div className="flex space-x-3">
                 {socialLinks.map((social, index) => (
                   <a

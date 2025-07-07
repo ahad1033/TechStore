@@ -77,13 +77,13 @@ const HeroSection = () => {
             </div>
 
             <Link to="/products">
-              <Button size="md" className="text-base px-6 py-3">
+              <Button size="md" className="text-base px-6 py-3 mb-5">
                 Shop Now
                 <ArrowRight className="ml-1.5 w-4 h-4" />
               </Button>
             </Link>
 
-            <div className="hidden md:grid grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+            <div className="hidden md:grid grid-cols-3 gap-4 pt-3 border-t border-gray-200">
               <div>
                 <div className="text-xl font-bold text-gray-900">50K+</div>
                 <div className="text-xs text-gray-600">Happy Customers</div>

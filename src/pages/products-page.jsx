@@ -1,25 +1,28 @@
+import { toast } from "sonner";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Card } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import { Input } from "../components/ui/input";
+import { useDispatch } from "react-redux";
 import {
-  ShoppingCart,
-  Heart,
-  Filter,
+  Eye,
   Grid,
   List,
+  Filter,
   ChevronLeft,
   ChevronRight,
-  Eye,
+  ShoppingCart,
 } from "lucide-react";
+
+import { Card } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+
+import { addToCart } from "@/store/slices/cartSlice";
 import { useGetProductsQuery } from "@/store/features/productsApi";
 import { useGetCategoriesQuery } from "@/store/features/categoriesApi";
+
 import FeaturedProductSkeletonCard from "@/components/skeleton/featured-product-skeleton";
-import { useDispatch } from "react-redux";
-import { addToCart } from "@/store/slices/cartSlice";
-import { toast } from "sonner";
+import { ServicesSection } from "@/components/sections";
 
 const ProductsPage = () => {
   const dispatch = useDispatch();
@@ -37,7 +40,11 @@ const ProductsPage = () => {
     search: "",
   });
 
-  const { data: products, isLoading } = useGetProductsQuery({
+  const {
+    data: products,
+    isLoading,
+    isFetching,
+  } = useGetProductsQuery({
     page,
     limit,
     search: filters.search,
@@ -87,7 +94,7 @@ const ProductsPage = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container section-padding">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -218,7 +225,7 @@ const ProductsPage = () => {
                   : "grid-cols-1"
               }`}
             >
-              {isLoading
+              {isLoading || isFetching
                 ? Array.from({ length: 10 }).map((_, index) => (
                     <FeaturedProductSkeletonCard key={index} />
                   ))
@@ -380,6 +387,8 @@ const ProductsPage = () => {
           </div>
         </div>
       </div>
+
+      <ServicesSection />
     </div>
   );
 };

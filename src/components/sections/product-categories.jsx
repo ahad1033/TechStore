@@ -3,19 +3,12 @@ import { Link } from "react-router-dom";
 
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
-import {
-  Smartphone,
-  Laptop,
-  Headphones,
-  Watch,
-  Camera,
-  Gamepad2,
-  Tablet,
-  Speaker,
-} from "lucide-react";
+import { Gamepad2 } from "lucide-react";
+
 import { useGetCategoriesQuery } from "@/store/features/categoriesApi";
-import CategoryCardSkeleton from "../skeleton/category-card-skeleton";
+
 import SectionHeading from "../shared/section-heading";
+import CategoryCardSkeleton from "../skeleton/category-card-skeleton";
 
 const ProductCategories = () => {
   const { data: categories, isLoading } = useGetCategoriesQuery({
@@ -58,7 +51,7 @@ const ProductCategories = () => {
 
                       {/* Icon */}
                       <div
-                        className={`absolute top-4 left-4 w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center text-white shadow-lg`}
+                        className={`absolute top-4 left-4 w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white shadow-lg`}
                       >
                         <Gamepad2 className="h-4 w-4" />
                       </div>

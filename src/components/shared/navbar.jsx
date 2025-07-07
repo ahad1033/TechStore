@@ -133,7 +133,7 @@ const Navbar = () => {
             {!currentUser ? (
               <Link
                 to="/login"
-                className="flex items-center space-x-1 text-foreground hover:text-background"
+                className="flex items-center space-x-1 text-background hover:text-foreground"
               >
                 <User className="w-4 h-4" />
                 <span>Sign In</span>
@@ -166,7 +166,11 @@ const Navbar = () => {
             {/* Logo */}
             <div className="col-span-2">
               <Link to="/" className="text-2xl font-bold">
-                TechStore
+                <img
+                  src="/techstore-logo.webp"
+                  alt="TechStore"
+                  className="w-50 lg:w-56 mt-1"
+                />
               </Link>
             </div>
 
@@ -177,7 +181,7 @@ const Navbar = () => {
             >
               <button
                 onMouseEnter={() => setActiveMegaMenu("categories")}
-                className="flex items-center space-x-1 hover:text-black font-semibold text-xl"
+                className="flex items-center space-x-1 hover:text-black  text-lg"
               >
                 <Grid2X2 className="w-5 h-5" />
                 <span className="">Categories</span>
