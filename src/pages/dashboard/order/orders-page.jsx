@@ -1,36 +1,30 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { debounce } from "lodash";
+import { Eye } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 
-import {
-  useGetOrdersQuery,
-  useUpdateOrderMutation,
-} from "@/store/features/ordersApi";
-import {
-  Edit,
-  Eye,
-  Package,
-  User,
-  Calendar,
-  DollarSign,
-  X,
-} from "lucide-react";
-import { useCurrentUser } from "@/store/slices/authSlice";
 import useBoolean from "@/hooks/use-boolean";
+
+import { useCurrentUser } from "@/store/slices/authSlice";
+import { useGetOrdersQuery } from "@/store/features/ordersApi";
+
+import DashboardHeader from "@/components/shared/dashboard-header";
 import OrderDetailsDialog from "@/components/dashboard/dialog/order-details-dialog";
 
 export default function OrdersPage() {
+  const limit = 10;
+
   const [page, setPage] = useState(1);
 
   const [search, setSearch] = useState("");
 
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const openOrderModel = useBoolean();
 
@@ -38,63 +32,71 @@ export default function OrdersPage() {
 
   const isAdmin = user?.role === "admin";
 
+  useEffect(() => {
+    const handler = debounce((value) => {
+      setDebouncedSearch(value);
+    }, 500);
+
+    handler(search);
+
+    return () => {
+      handler.cancel();
+    };
+  }, [search]);
+
   const { data: ordersData, isLoading } = useGetOrdersQuery(
     {
       page,
-      limit: 10,
-      search,
+      limit,
+      search: debouncedSearch,
     },
     {
-      refetchOnMountOrArgChange: true,
       refetchOnFocus: false,
       refetchOnReconnect: false,
+      refetchOnMountOrArgChange: true,
     }
   );
-
-  console.log("ordersData: ", ordersData);
 
   // const { data: orderDetails, isLoading: orderDetailsLoading } =
   //   useGetSingleOrderQuery(selectedOrder?._id, { skip: !selectedOrder?._id });
 
-  const [updateOrder, { isLoading: updating }] = useUpdateOrderMutation();
+  // const [updateOrder, { isLoading: updating }] = useUpdateOrderMutation();
 
   const handleViewOrder = (order) => {
     openOrderModel.onTrue();
     setSelectedOrder(order);
   };
 
-  const handleUpdateOrderStatus = async (orderId, status) => {
-    try {
-      await updateOrder({ id: orderId, status }).unwrap();
-      // Refresh the orders list
-    } catch (error) {
-      console.error("Failed to update order status:", error);
-    }
-  };
+  // const handleUpdateOrderStatus = async (orderId, status) => {
+  //   try {
+  //     await updateOrder({ id: orderId, status }).unwrap();
+  //     // Refresh the orders list
+  //   } catch (error) {
+  //     console.error("Failed to update order status:", error);
+  //   }
+  // };
 
   const columns = [
     {
       key: "orderNumber",
       label: "Order #",
-      sortable: true,
-      render: () => (
-        <span className="font-mono text-sm">
-          {(() => Math.floor(Math.random() * (100 - 50 + 1)) + 3)()}
-        </span>
-      ),
     },
-    {
-      key: "name",
-      label: "Customer",
-      // render: (value) => (
-      //   <div>
-      //     <div className="font-medium">{value?.userId?.name || "N/A"}</div>
-      //     <div className="text-sm text-muted-foreground">
-      //       {value?.userId?.email}
-      //     </div>
-      //   </div>
-      // ),
-    },
+    ...(isAdmin
+      ? [
+          {
+            key: "userId",
+            label: "Customer",
+            render: (value) => (
+              <div>
+                <div className="font-medium">{value?.name || "N/A"}</div>
+                <div className="text-sm text-muted-foreground">
+                  {value?.email}
+                </div>
+              </div>
+            ),
+          },
+        ]
+      : []),
     {
       key: "total",
       label: "Total",
@@ -114,7 +116,7 @@ export default function OrdersPage() {
     },
     {
       key: "actions",
-      label: "Actions",
+      label: "Action",
       render: (_, row) => (
         <div className="flex items-center space-x-2">
           <Button
@@ -141,21 +143,21 @@ export default function OrdersPage() {
     : null;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Orders</h1>
-        <Badge>{ordersData?.data?.length || 0} orders</Badge>
-      </div>
+    <div className="container space-y-6">
+      <DashboardHeader
+        title="Orders"
+        badge={<Badge>{ordersData?.data?.length || 0} orders</Badge>}
+      />
 
       <DataTable
-        data={ordersData?.data || []}
+        dataType="order"
         columns={columns}
         loading={isLoading}
-        pagination={pagination}
-        onPageChange={setPage}
         onSearch={setSearch}
-        searchPlaceholder="Search orders..."
-        dataType="order"
+        onPageChange={setPage}
+        pagination={pagination}
+        data={ordersData?.data || []}
+        searchPlaceholder="Search by order number or total amount..."
       />
 
       <OrderDetailsDialog

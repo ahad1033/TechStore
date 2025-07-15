@@ -19,7 +19,7 @@ createRoot(document.getElementById("root")).render(
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider defaultTheme="light" storageKey="techstore-theme">
           <RouterProvider router={router} />
-          <Toaster position="top-right" />
+          <Toaster position="bottom-right" />
         </ThemeProvider>
       </PersistGate>
     </Provider>

@@ -5,8 +5,8 @@ const mode = "prod";
 
 const baseURL =
   mode === "development"
-    ? "https://tech-store-server.onrender.com/api/v1"
-    : "http://localhost:5000/api/v1";
+    ? "http://localhost:5000/api/v1"
+    : "https://tech-store-server.onrender.com/api/v1";
 
 const refreshURL =
   mode === "development"

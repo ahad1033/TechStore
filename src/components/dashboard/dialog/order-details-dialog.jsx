@@ -1,12 +1,12 @@
 import {
-  Calendar,
-  DollarSign,
-  Package,
-  User,
   X,
-  Phone,
+  User,
   Mail,
   Home,
+  Phone,
+  Package,
+  Calendar,
+  DollarSign,
 } from "lucide-react";
 
 import {
@@ -16,8 +16,8 @@ import {
   DialogHeader,
   DialogContent,
 } from "@/components/ui/dialog";
-import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
 
 export default function OrderDetailsDialog({ openOrderModel, order }) {
   const {
@@ -29,8 +29,8 @@ export default function OrderDetailsDialog({ openOrderModel, order }) {
     products = [],
     phone,
     orderNumber,
-    subtotal,
-    shipping,
+    subTotal,
+    deliveryFee,
   } = order || {};
 
   return (
@@ -149,11 +149,11 @@ export default function OrderDetailsDialog({ openOrderModel, order }) {
                 {products.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between"
+                    className="grid grid-cols-12 items-center gap-4"
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="col-span-9 flex items-center gap-4">
                       <img
-                        src={item.productId?.images?.[0] || "/placeholder.svg"}
+                        src={item.productId?.images?.[0]}
                         alt={item.productId?.title || "Product Image"}
                         className="w-16 h-16 rounded-md object-cover"
                       />
@@ -166,12 +166,12 @@ export default function OrderDetailsDialog({ openOrderModel, order }) {
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="col-span-3 text-right self-end">
                       <p className="font-medium">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ${(item.price * item.quantity).toFixed(0)}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        ${item.price?.toFixed(2)} each
+                        ${item.price?.toFixed(0)} each
                       </p>
                     </div>
                   </div>
@@ -181,20 +181,24 @@ export default function OrderDetailsDialog({ openOrderModel, order }) {
               <Separator className="my-6" />
 
               {/* Order Summary Section */}
-              <div className="flex justify-end">
-                <div className="w-full max-w-xs space-y-2">
+              <div className="grid grid-cols-12">
+                <div className="col-start-7 col-span-6 ml-auto w-full max-w-xs space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal:</span>
-                    <span>${subtotal?.toFixed(2) || "0.00"}</span>
+                    <span>${subTotal?.toFixed(0) || "0"}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Shipping:</span>
-                    <span>${shipping?.toFixed(2) || "0.00"}</span>
-                  </div>
+
+                  {deliveryFee !== 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Shipping:</span>
+                      <span>${deliveryFee?.toFixed(0)}</span>
+                    </div>
+                  )}
+
                   <Separator className="my-2" />
                   <div className="flex justify-between font-bold text-base">
                     <span>Total:</span>
-                    <span>${total?.toFixed(2) || "0.00"}</span>
+                    <span>${total?.toFixed(0)}</span>
                   </div>
                 </div>
               </div>

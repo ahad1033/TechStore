@@ -60,9 +60,6 @@ const ProductForm = () => {
   // Determine if we are in edit mode
   const isEdit = Boolean(initialData && initialData.id);
 
-  console.log("isEdit: ", isEdit);
-  console.log("loadingState: ", loadingState);
-
   const [createProduct] = useCreateProductMutation();
 
   const [updateProduct] = useUpdateProductMutation();

@@ -1,6 +1,15 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+import {
+  Search,
+  Loader,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -10,15 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Loader,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function DataTable({
   data = [],
@@ -71,14 +73,14 @@ export default function DataTable({
   return (
     <div className="space-y-4">
       <div className="flex sm:flex-col items-center justify-between">
-        <div className="flex items-center space-x-2">
+        <div className="w-full space-x-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder={searchPlaceholder}
               value={searchTerm}
+              placeholder={searchPlaceholder}
+              className="pl-8 w-full border border-black/20"
               onChange={(e) => handleSearch(e.target.value)}
-              className="pl-8 w-[300px]"
             />
           </div>
         </div>
@@ -115,12 +117,10 @@ export default function DataTable({
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="text-center py-8"
-                >
-                  <Loader className="animate-spin" />
-                  {/* Loading... */}
+                <TableCell colSpan={columns.length} className="py-24 px-8">
+                  <div className="flex justify-center items-center">
+                    <Loader className="h-8 w-8 animate-spin" />
+                  </div>
                 </TableCell>
               </TableRow>
             ) : data.length === 0 ? (

@@ -1,16 +1,18 @@
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
-  Trash2,
   Plus,
   Minus,
-  ShoppingCart,
+  Truck,
+  Trash2,
   ArrowLeft,
   CreditCard,
-  Truck,
+  ShoppingCart,
 } from "lucide-react";
 import { Card } from "../components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "../components/ui/button";
 
 import {
@@ -18,8 +20,6 @@ import {
   updateQuantity,
   useCurrentCart,
 } from "@/store/slices/cartSlice";
-import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -44,20 +44,18 @@ const CartPage = () => {
     0
   );
   const shipping = subtotal > 500 ? 0 : 10;
-  
+
   const total = subtotal + shipping;
 
   if (cartProducts?.items?.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ShoppingCart className="w-12 h-12 text-gray-400" />
+      <div className="section-padding">
+        <div className="max-w-4xl mx-auto px-8 lg:px-36 text-center">
+          <div className="w-32 h-32 bg-gray-300 dark:bg-gray-50/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShoppingCart className="w-12 h-12 " />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Your cart is empty
-          </h2>
-          <p className="text-gray-600 mb-8">
+          <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
+          <p className="text-muted-foreground mb-8">
             Looks like you haven't added any items to your cart yet.
           </p>
           <Link to="/products">
