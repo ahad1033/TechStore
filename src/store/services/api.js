@@ -1,9 +1,20 @@
 import { setUser } from "../slices/authSlice";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const mode = "prod";
+
+const baseURL =
+  mode === "development"
+    ? "https://tech-store-server.onrender.com/api/v1"
+    : "http://localhost:5000/api/v1";
+
+const refreshURL =
+  mode === "development"
+    ? "http://localhost:5000/api/v1/refresh-token"
+    : "https://tech-store-server.onrender.com/api/v1/refresh-token";
+
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://tech-store-server.onrender.com/api/v1",
-  // baseUrl: "http://localhost:5000/api/v1",
+  baseUrl: baseURL,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.token;
@@ -20,14 +31,10 @@ const baseQueryWithRefreshToken = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
   if (result?.error?.status === 401) {
-    const res = await fetch(
-      // "http://localhost:5000/api/v1/refresh-token",
-      "https://tech-store-server.onrender.com/api/v1/refresh-token",
-      {
-        method: "POST",
-        credentials: "include",
-      }
-    );
+    const res = await fetch(refreshURL, {
+      method: "POST",
+      credentials: "include",
+    });
 
     const data = await res.json();
 

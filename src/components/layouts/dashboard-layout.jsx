@@ -61,17 +61,11 @@ export default function DashboardLayout() {
 
   const location = useLocation();
 
-  console.log(location.pathname);
-
   const logoutLoading = useBoolean();
 
   const user = useSelector(useCurrentUser)?.user;
 
-  console.log(user);
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  console.log("isSidebarOpen: ", isSidebarOpen);
 
   const isAdmin = user?.role === "admin";
 

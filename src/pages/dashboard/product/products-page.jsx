@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { useState } from "react";
-import { Trash2 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Edit, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import {
   AlertDialog,
@@ -22,11 +22,13 @@ import {
 } from "@/store/features/productsApi";
 
 import LoadingButton from "@/components/shared/loading-button";
+import DashboardHeader from "@/components/shared/dashboard-header";
 
 export default function DProductsPage() {
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
+
   const [search, setSearch] = useState("");
 
   const [productToDelete, setProductToDelete] = useState(null);
@@ -37,6 +39,8 @@ export default function DProductsPage() {
     search,
   });
 
+  console.log("productsData: ", productsData);
+
   const [deleteProduct, { isLoading: deleting }] = useDeleteProductMutation();
 
   // Function to open the confirmation dialog
@@ -44,7 +48,6 @@ export default function DProductsPage() {
     setProductToDelete(id);
   };
 
-  // eslint-disable-next-line no-unused-vars
   const handleEditProduct = (data) => {
     navigate(`/dashboard/update-product/${data.id}`, { replace: true });
   };
@@ -76,7 +79,7 @@ export default function DProductsPage() {
       label: "Image",
       render: (img) => (
         <div>
-          <img src={img[0]} className="w-30" />
+          <img src={img[0]} className="w-20 rounded-sm" />
         </div>
       ),
     },
@@ -109,19 +112,21 @@ export default function DProductsPage() {
       label: "Actions",
       render: (_, row) => (
         <div className="flex items-center space-x-2">
-          {/* <Button
-            variant="ghost"
+          <Button
             size="sm"
+            variant="icon"
+            className="text-info cursor-pointer"
             onClick={() => handleEditProduct(row)}
           >
             <Edit className="h-4 w-4" />
-          </Button> */}
+          </Button>
 
           <Button
-            variant="ghost"
             size="sm"
-            onClick={() => confirmDeleteCategory(row.id)}
+            variant="icon"
             disabled={deleting}
+            className="text-destructive cursor-pointer"
+            onClick={() => confirmDeleteCategory(row.id)}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -133,7 +138,7 @@ export default function DProductsPage() {
   const pagination = productsData
     ? {
         currentPage: page,
-        totalPages: Math.ceil(productsData?.meta?.total / 10),
+        totalPages: productsData?.meta?.totalPages,
         total: productsData?.meta?.total,
         from: (page - 1) * 10 + 1,
         to: Math.min(page * 10, productsData?.meta?.total),
@@ -142,14 +147,11 @@ export default function DProductsPage() {
 
   return (
     <div className="container space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Categories</h1>
-
-        <Link to="/dashboard/create-product">
-          <Button>Add product</Button>
-        </Link>
-        {/* <Badge variant="outline">{productsData?.total || 0} categories</Badge> */}
-      </div>
+      <DashboardHeader
+        title="Products"
+        button="Add product"
+        href="/dashboard/create-product"
+      />
 
       <DataTable
         data={productsData?.data || []}

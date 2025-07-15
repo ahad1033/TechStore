@@ -9,28 +9,25 @@ import { ArrowLeft, Package, MapPin, Truck } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import {
   Form,
-  FormControl,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
+  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 
-import { clearCart, useCurrentCart } from "@/store/slices/cartSlice";
-import { useCreateOrderMutation } from "@/store/features/ordersApi";
 import { useCurrentUser } from "@/store/slices/authSlice";
+import { useCreateOrderMutation } from "@/store/features/ordersApi";
+import { clearCart, useCurrentCart } from "@/store/slices/cartSlice";
 
 // --- Yup Validation Schema for Shipping Address ---
 const shippingSchema = yup.object().shape({
   name: yup.string().trim().required("Full Name is required"),
-  // email: yup
-  //   .string()
-  //   .email("Invalid email address")
-  //   .required("Email is required"),
   phone: yup
     .string()
     .matches(
@@ -39,12 +36,7 @@ const shippingSchema = yup.object().shape({
     )
     .required("Phone number is required"),
   shippingAddress: yup.string().trim().required("Shipping is required"),
-  // city: yup.string().trim().required("City is required"),
-  // state: yup.string().trim().required("State/Province is required"),
-  // zipCode: yup.string().trim().required("Zip/Postal Code is required"),
-  // country: yup.string().trim().required("Country is required"),
-  // deliveryNotes: yup.string().trim().optional(),
-  // paymentMethod: yup.string().required("Payment method is required"),
+  deliveryNotes: yup.string().trim().optional(),
 });
 
 const CheckoutPage = () => {
@@ -58,12 +50,13 @@ const CheckoutPage = () => {
 
   const [createOrder] = useCreateOrderMutation();
 
-  const subtotal = cartProducts?.items?.reduce(
+  const subTotal = cartProducts?.items?.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const shipping = subtotal > 500 ? 0 : 10;
-  const total = subtotal + shipping;
+  const shipping = subTotal > 500 ? 0 : 10;
+
+  const total = subTotal + shipping;
 
   // Redirect if cart data is missing (e.g., direct access to /checkout)
   useEffect(() => {
@@ -77,15 +70,10 @@ const CheckoutPage = () => {
   const form = useForm({
     resolver: yupResolver(shippingSchema),
     defaultValues: {
-      name: "",
+      name: currentUser?.name || "",
       phone: "",
       shippingAddress: "",
-      // city: "",
-      // state: "",
-      // zipCode: "",
-      // country: "",
-      // deliveryNotes: "",
-      // paymentMethod: "credit_card",
+      deliveryNotes: "",
     },
   });
 
@@ -102,10 +90,15 @@ const CheckoutPage = () => {
       price: item.price,
     }));
 
-    const dataToSend = { products: productData, ...data, total };
+    const dataToSend = {
+      ...data,
+      total,
+      subTotal,
+      products: productData,
+      deliveryFee: shipping,
+    };
 
     try {
-      // In a real application, you would send this data to your backend
       const response = await createOrder(dataToSend);
 
       if (response.success) {
@@ -137,26 +130,28 @@ const CheckoutPage = () => {
         <h1 className="text-3xl font-bold">Checkout</h1>
       </div>
 
-      <div className="mb-6">
-        <div className="flex items-center justify-center bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg shadow-sm">
-          <svg
-            className="w-5 h-5 mr-2 text-red-500 flex-shrink-0"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z"
-            />
-          </svg>
-          <span className="font-semibold">
-            Please log in first to confirm your order!
-          </span>
+      {!currentUser && (
+        <div className="mb-6">
+          <div className="flex items-center justify-center bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg shadow-sm">
+            <svg
+              className="w-5 h-5 mr-2 text-red-500 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z"
+              />
+            </svg>
+            <span className="font-semibold">
+              Please log in first to confirm your order!
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Shipping Address Form */}
@@ -183,29 +178,12 @@ const CheckoutPage = () => {
                         <FormItem>
                           <FormLabel>Full Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="John Doe" {...field} />
+                            <Input placeholder="John Doe" {...field} readOnly />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    {/* <FormField
-                      control={control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="email"
-                              placeholder="john.doe@example.com"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    /> */}
 
                     <FormField
                       control={control}
@@ -224,59 +202,6 @@ const CheckoutPage = () => {
                         </FormItem>
                       )}
                     />
-
-                    {/* <FormField
-                      control={control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>City</FormLabel>
-                          <FormControl>
-                            <Input placeholder="New York" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>State/Province</FormLabel>
-                          <FormControl>
-                            <Input placeholder="NY" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={control}
-                      name="zipCode"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Zip/Postal Code</FormLabel>
-                          <FormControl>
-                            <Input placeholder="10001" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={control}
-                      name="country"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Country</FormLabel>
-                          <FormControl>
-                            <Input placeholder="USA" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    /> */}
                   </div>
 
                   <FormField
@@ -293,7 +218,7 @@ const CheckoutPage = () => {
                     )}
                   />
 
-                  {/* <FormField
+                  <FormField
                     control={control}
                     name="deliveryNotes"
                     render={({ field }) => (
@@ -308,61 +233,7 @@ const CheckoutPage = () => {
                         <FormMessage />
                       </FormItem>
                     )}
-                  /> */}
-
-                  {/* Payment Method Selection */}
-                  {/* <Card className="p-6 mt-8">
-                    <CardHeader className="px-0 pt-0">
-                      <CardTitle className="text-xl font-bold mb-4 flex items-center">
-                        <CreditCard className="w-5 h-5 mr-2 text-primary" />{" "}
-                        Payment Method
-                      </CardTitle>
-                    </CardHeader>
-
-                    <CardContent className="px-0 pb-0">
-                      <FormField
-                        control={control}
-                        name="paymentMethod"
-                        render={({ field }) => (
-                          <FormItem className="space-y-3">
-                            <FormControl>
-                              <RadioGroup
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                                className="flex flex-col space-y-1"
-                              >
-                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                  <FormControl>
-                                    <RadioGroupItem value="credit_card" />
-                                  </FormControl>
-                                  <FormLabel className="font-normal">
-                                    Credit Card
-                                  </FormLabel>
-                                </FormItem>
-                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                  <FormControl>
-                                    <RadioGroupItem value="paypal" />
-                                  </FormControl>
-                                  <FormLabel className="font-normal">
-                                    PayPal
-                                  </FormLabel>
-                                </FormItem>
-                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                  <FormControl>
-                                    <RadioGroupItem value="cash_on_delivery" />
-                                  </FormControl>
-                                  <FormLabel className="font-normal">
-                                    Cash on Delivery
-                                  </FormLabel>
-                                </FormItem>
-                              </RadioGroup>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </CardContent>
-                  </Card> */}
+                  />
 
                   {/* Place Order Button */}
                   <Button
@@ -416,7 +287,7 @@ const CheckoutPage = () => {
             <div className="space-y-3 mb-6 border-t pt-4">
               <div className="flex justify-between">
                 <span className="">Subtotal</span>
-                <span className="font-medium">${subtotal.toFixed(2)}</span>
+                <span className="font-medium">${subTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="">Shipping</span>
@@ -424,10 +295,7 @@ const CheckoutPage = () => {
                   {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
                 </span>
               </div>
-              {/* <div className="flex justify-between">
-                  <span className="">Tax</span>
-                  <span className="font-medium">${tax.toFixed(2)}</span>
-                </div> */}
+
               <div className="border-t pt-3">
                 <div className="flex justify-between">
                   <span className="text-lg font-bold">Total</span>
@@ -440,7 +308,7 @@ const CheckoutPage = () => {
 
             {/* Shipping Info */}
             <div className="mb-6 p-4 bg-green-50 rounded-lg">
-              <div className="flex items-center space-x-2 text-green-700">
+              <div className="flex items-center justify-center space-x-2 text-green-700">
                 <Truck className="w-4 h-4" />
                 <span className="text-sm font-medium">
                   Free shipping on orders over $500

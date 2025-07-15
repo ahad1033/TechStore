@@ -3,12 +3,11 @@ import { api } from "../services/api";
 export const ordersApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getOrders: builder.query({
-      query: () =>
-        // { page = 1, limit = 10, status, userId }
-        ({
-          url: "/orders/get-orders",
-          // params: { page, limit, status, userId },
-        }),
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: "/orders/get-orders",
+        params: { page, limit, search },
+      }),
+
       providesTags: (result) =>
         result
           ? [
@@ -18,10 +17,10 @@ export const ordersApi = api.injectEndpoints({
           : [{ type: "Order", id: "LIST" }],
     }),
 
-    getOrder: builder.query({
-      query: (id) => `/orders/${id}`,
-      providesTags: (result, error, id) => [{ type: "Order", id }],
-    }),
+    // getOrder: builder.query({
+    //   query: (id) => `/orders/${id}`,
+    //   providesTags: (result, error, id) => [{ type: "Order", id }],
+    // }),
 
     createOrder: builder.mutation({
       query: (data) => ({
@@ -48,7 +47,7 @@ export const ordersApi = api.injectEndpoints({
 
 export const {
   useGetOrdersQuery,
-  useGetOrderQuery,
+  // useGetOrderQuery,
   useUpdateOrderMutation,
   useCreateOrderMutation,
 } = ordersApi;

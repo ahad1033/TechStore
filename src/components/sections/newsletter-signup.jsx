@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { toast } from "sonner";
 import { useState } from "react";
 import { motion } from "motion/react";
@@ -127,7 +128,7 @@ const NewsletterSignup = () => {
                         placeholder="Enter your email address"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="bg-white/10 border-white/30 text-white placeholder-white/60 focus:border-white focus:ring-white/20 h-12 lg:h-14 text-white lg:text-lg rounded-xl"
+                        className="bg-white/10 border-white/30 text-white placeholder-white/60 focus:border-white focus:ring-white/20 h-12 lg:h-14 lg:text-lg rounded-xl"
                         required
                       />
                     </div>

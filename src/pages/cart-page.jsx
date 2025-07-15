@@ -19,6 +19,7 @@ import {
   useCurrentCart,
 } from "@/store/slices/cartSlice";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ const CartPage = () => {
     0
   );
   const shipping = subtotal > 500 ? 0 : 10;
+  
   const total = subtotal + shipping;
 
   if (cartProducts?.items?.length === 0) {
@@ -101,9 +103,7 @@ const CartPage = () => {
                     {item?.product?.title}
                   </h3>
 
-                  {/* <p className="text-sm text-gray-500">
-                      {item.product.categoryId.name}
-                    </p> */}
+                  <Badge className="my-2">{item.product.categoryId.name}</Badge>
 
                   <p className="text-lg font-bold text-primary">
                     ${item?.price}

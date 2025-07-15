@@ -21,6 +21,7 @@ import {
   useDeleteCategoryMutation,
 } from "@/store/features/categoriesApi";
 import LoadingButton from "@/components/shared/loading-button";
+import DashboardHeader from "@/components/shared/dashboard-header";
 
 export default function CategoriesPage() {
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ export default function CategoriesPage() {
       label: "Image",
       render: (img) => (
         <div>
-          <img src={img} className="w-30" />
+          <img src={img} className="w-20 rounded-sm" />
         </div>
       ),
     },
@@ -106,6 +107,7 @@ export default function CategoriesPage() {
           >
             <Edit className="h-4 w-4" />
           </Button>
+
           <Button
             variant="ghost"
             size="sm"
@@ -131,14 +133,11 @@ export default function CategoriesPage() {
 
   return (
     <div className="container space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Categories</h1>
-
-        <Link to="/dashboard/create-category">
-          <Button>Add category</Button>
-        </Link>
-        {/* <Badge variant="outline">{categoriesData?.total || 0} categories</Badge> */}
-      </div>
+      <DashboardHeader
+        title="Categories"
+        button="Add category"
+        href="/dashboard/create-category"
+      />
 
       <DataTable
         data={categoriesData?.data || []}

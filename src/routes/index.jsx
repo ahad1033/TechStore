@@ -19,7 +19,7 @@ import CategoryForm from "@/pages/dashboard/category/category-form";
 import DProductsPage from "@/pages/dashboard/product/products-page";
 import SubcategoriesPage from "@/pages/dashboard/subcategories-page";
 import CategoriesPage from "@/pages/dashboard/category/categories-page";
-import OrdersPage from "@/pages/dashboard/orders-page";
+import OrdersPage from "@/pages/dashboard/order/orders-page";
 
 export const routes = [
   {

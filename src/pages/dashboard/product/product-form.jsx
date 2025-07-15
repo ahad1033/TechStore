@@ -10,12 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
   FormMessage,
+  FormControl,
+  FormDescription,
 } from "@/components/ui/form";
 import {
   Select,
@@ -34,6 +34,7 @@ import {
   useGetProductQuery,
   useUpdateProductMutation,
 } from "@/store/features/productsApi";
+import CircularLoading from "@/components/shared/circular-loading";
 
 const ProductForm = () => {
   const { id } = useParams();
@@ -44,14 +45,23 @@ const ProductForm = () => {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
 
-  const { data: categories } = useGetCategoriesQuery({ page: 1, limit: 100 });
+  const { data: categories, isLoading: categoryLoading } =
+    useGetCategoriesQuery({ page: 1, limit: 100 });
 
-  const { data: currentProduct } = useGetProductQuery(id, { skip: !id });
+  const { data: currentProduct, isLoading: productLoading } =
+    useGetProductQuery(id, {
+      skip: !id,
+    });
 
   const initialData = currentProduct && currentProduct?.data;
 
+  const loadingState = categoryLoading && productLoading;
+
   // Determine if we are in edit mode
   const isEdit = Boolean(initialData && initialData.id);
+
+  console.log("isEdit: ", isEdit);
+  console.log("loadingState: ", loadingState);
 
   const [createProduct] = useCreateProductMutation();
 
@@ -146,14 +156,11 @@ const ProductForm = () => {
     formState: { isSubmitting },
   } = form;
 
-  // Watch the 'images' field to get the current files selected by the user
-  const selectedFiles = watch("images");
-
   // Effect to set default values and initial image previews when data loads for edit
   useEffect(() => {
     if (isEdit && initialData) {
       form.reset({
-        categoryId: initialData.categoryId || "",
+        categoryId: initialData.categoryId?.id || "",
         title: initialData.title || "",
         description: initialData.description || "",
         features: initialData.features || "",
@@ -255,8 +262,6 @@ const ProductForm = () => {
       uploadedImageUrls = [...existingImageUrls, ...uploadedImageUrls];
     }
 
-    console.log(data);
-
     // Prepare the object to send to your database
     const productDataForDatabase = {
       categoryId: data.categoryId,
@@ -265,11 +270,9 @@ const ProductForm = () => {
       features: data.features,
       specifications: data.specifications,
       regularPrice: data.regularPrice,
-      discountPrice: data.discountPrice || null, // Send null if optional and not provided
-      images: uploadedImageUrls, // Array of image URLs
+      discountPrice: data.discountPrice || null,
+      images: uploadedImageUrls,
     };
-
-    console.log("Product data to send to database:", productDataForDatabase);
 
     try {
       let result;
@@ -298,6 +301,7 @@ const ProductForm = () => {
 
     // Reset form only if it's a new product creation
     if (!isEdit) {
+      // --- TODO ---
       //   reset();
       //   setImagePreviews([]);
     }
@@ -306,228 +310,237 @@ const ProductForm = () => {
 
   return (
     <div className="container w-full max-w-7xl">
-      <Form {...form}>
-        <form
-          onSubmit={handleSubmit(handleFormSubmit)}
-          className="space-y-8 p-4 max-w-3xl mx-auto"
-        >
-          {/* Category Dropdown */}
-          <FormField
-            control={control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+      {id && loadingState ? (
+        <CircularLoading />
+      ) : (
+        <Form {...form}>
+          <form
+            onSubmit={handleSubmit(handleFormSubmit)}
+            className="space-y-8 p-4 max-w-3xl mx-auto"
+          >
+            {/* Category Dropdown */}
+            <FormField
+              control={control}
+              name="categoryId"
+              render={({ field }) => {
+                console.log("category field: ", field);
+                return (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      // defaultValue={field.value}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories?.data?.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Select the category this product belongs to.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            {/* Product Title Field */}
+            <FormField
+              control={control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Title</FormLabel>
                   <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
+                    <Input placeholder="Enter product title" {...field} />
                   </FormControl>
-                  <SelectContent>
-                    {categories?.data?.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  Select the category this product belongs to.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Product Title Field */}
-          <FormField
-            control={control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Product Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter product title" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Regular Price Field */}
+            <FormField
+              control={control}
+              name="regularPrice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Regular Price</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="e.g., 99.99"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Regular Price Field */}
-          <FormField
-            control={control}
-            name="regularPrice"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Regular Price</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="e.g., 99.99"
-                    {...field}
-                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Discount Price Field */}
+            <FormField
+              control={control}
+              name="discountPrice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Discount Price (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="e.g., 79.99"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Must be less than the regular price.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Discount Price Field */}
-          <FormField
-            control={control}
-            name="discountPrice"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Discount Price (Optional)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="e.g., 79.99"
-                    {...field}
-                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Must be less than the regular price.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Description Field (Rich Text Editor) */}
+            <FormField
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <RichTextEditor
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Enter product description..."
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Provide a detailed description of the product.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Description Field (Rich Text Editor) */}
-          <FormField
-            control={control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <RichTextEditor
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Enter product description..."
-                  />
-                </FormControl>
-                <FormDescription>
-                  Provide a detailed description of the product.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Features Field (Rich Text Editor) */}
+            <FormField
+              control={control}
+              name="features"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Features</FormLabel>
+                  <FormControl>
+                    <RichTextEditor
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="List product features..."
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Highlight key features of the product.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Features Field (Rich Text Editor) */}
-          <FormField
-            control={control}
-            name="features"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Features</FormLabel>
-                <FormControl>
-                  <RichTextEditor
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="List product features..."
-                  />
-                </FormControl>
-                <FormDescription>
-                  Highlight key features of the product.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Specifications Field (Rich Text Editor) */}
+            <FormField
+              control={control}
+              name="specifications"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Specifications</FormLabel>
+                  <FormControl>
+                    <RichTextEditor
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Detail product specifications..."
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Provide technical specifications of the product.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Specifications Field (Rich Text Editor) */}
-          <FormField
-            control={control}
-            name="specifications"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Specifications</FormLabel>
-                <FormControl>
-                  <RichTextEditor
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Detail product specifications..."
-                  />
-                </FormControl>
-                <FormDescription>
-                  Provide technical specifications of the product.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Images Upload Field */}
+            <FormField
+              control={control}
+              name="images"
+              render={({ field: { onChange, value, ...rest } }) => (
+                <FormItem>
+                  <FormLabel>Product Images (Max 4)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*, image/jpeg"
+                      multiple
+                      onChange={(e) => {
+                        handleImageChange(e);
+                      }}
+                      disabled={imagePreviews.length >= 4}
+                      {...rest}
+                    />
+                  </FormControl>
+                  {imagePreviews.length > 0 && (
+                    <div className="mt-4 grid grid-cols-2 gap-4">
+                      {imagePreviews.map((src, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={src}
+                            alt={`Product Image ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-md"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-1 right-1 rounded-full p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <FormDescription>
+                    Upload up to 4 images for the product.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Images Upload Field */}
-          <FormField
-            control={control}
-            name="images"
-            render={({ field: { onChange, value, ...rest } }) => (
-              <FormItem>
-                <FormLabel>Product Images (Max 4)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    accept="image/*, image/jpeg"
-                    multiple // Allow multiple file selection
-                    onChange={(e) => {
-                      // Pass all selected files to handleImageChange
-                      handleImageChange(e);
-                      // React Hook Form needs to know about the files too
-                      // We'll manage the actual files in handleImageChange and setValue
-                    }}
-                    disabled={imagePreviews.length >= 4} // Disable if max images reached
-                    {...rest}
-                  />
-                </FormControl>
-                {imagePreviews.length > 0 && (
-                  <div className="mt-4 grid grid-cols-2 gap-4">
-                    {imagePreviews.map((src, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={src}
-                          alt={`Product Image ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-md"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="absolute top-1 right-1 rounded-full p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleRemoveImage(index)}
-                        >
-                          X
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <FormDescription>
-                  Upload up to 4 images for the product.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
+            {isSubmitting ? (
+              <LoadingButton />
+            ) : (
+              <Button type="submit" disabled={isSubmitting}>
+                {isEdit ? "Save Changes" : "Create Product"}
+              </Button>
             )}
-          />
-
-          {isSubmitting ? (
-            <LoadingButton />
-          ) : (
-            <Button type="submit" disabled={isSubmitting}>
-              {isEdit ? "Save Changes" : "Create Product"}
-            </Button>
-          )}
-        </form>
-      </Form>
+          </form>
+        </Form>
+      )}
     </div>
   );
 };

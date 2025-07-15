@@ -18,6 +18,7 @@ import {
   ChevronsRight,
   Loader,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function DataTable({
   data = [],
@@ -28,6 +29,7 @@ export default function DataTable({
   onSearch,
   onSort,
   searchPlaceholder = "Search...",
+  dataType,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -49,13 +51,14 @@ export default function DataTable({
   };
 
   const getStatusBadge = (status) => {
+    console.log(status);
     const statusConfig = {
       active: { variant: "default", label: "Active" },
       inactive: { variant: "secondary", label: "Inactive" },
-      pending: { variant: "outline", label: "Pending" },
-      completed: { variant: "default", label: "Completed" },
+      pending: { variant: "info", label: "Pending" },
+      completed: { variant: "green", label: "Completed" },
       cancelled: { variant: "destructive", label: "Cancelled" },
-      processing: { variant: "outline", label: "Processing" },
+      processing: { variant: "yellow", label: "Processing" },
     };
 
     const config = statusConfig[status?.toLowerCase()] || {
@@ -116,7 +119,8 @@ export default function DataTable({
                   colSpan={columns.length}
                   className="text-center py-8"
                 >
-                  <Loader className="animate-spin" /> Loading...
+                  <Loader className="animate-spin" />
+                  {/* Loading... */}
                 </TableCell>
               </TableRow>
             ) : data.length === 0 ? (
@@ -134,7 +138,10 @@ export default function DataTable({
                   {columns.map((column) => (
                     <TableCell
                       key={column.key}
-                      className={column.className || ""}
+                      className={cn(
+                        dataType === "order" && "pt-4 pb-4",
+                        column.className || ""
+                      )}
                     >
                       {column.render
                         ? column.render(row[column.key], row)
@@ -170,7 +177,7 @@ export default function DataTable({
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
-            
+
             <Button
               variant="outline"
               size="sm"
