@@ -2,17 +2,15 @@ import { api } from "../services/api";
 
 export const analyticsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getDashboardAnalytics: builder.query({
-      query: (role) => `/analytics/dashboard/${role}`,
+    getAnalyticsSummary: builder.query({
+      query: () => "/analytics/get-analytics",
       providesTags: ["Analytics"],
-    }),
-
-    getUserAnalytics: builder.query({
-      query: (userId) => `/users/${userId}/analytics`,
-      providesTags: (result, error, userId) => [{ type: "User", id: userId }],
+      keepUnusedDataFor: 0,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+      refetchOnFocus: true,
     }),
   }),
 });
 
-export const { useGetDashboardAnalyticsQuery, useGetUserAnalyticsQuery } =
-  analyticsApi;
+export const { useGetAnalyticsSummaryQuery } = analyticsApi;

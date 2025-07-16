@@ -31,7 +31,7 @@ const navigationLinks = [
   { name: "Products", path: "/products" },
   { name: "About", path: "/about" },
   { name: "Contact", path: "/contact" },
-  { name: "Dashboard", path: "/dashboard" },
+  { name: "Dashboard", path: "/dashboard/analytics" },
 ];
 
 const megaMenuCategories = [

@@ -1,66 +1,26 @@
-import React from "react";
 import { useSelector } from "react-redux";
+import { Users, Package, DollarSign, ShoppingCart } from "lucide-react";
+
 import {
   Card,
+  CardTitle,
+  CardHeader,
   CardContent,
   CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-import {
-  BarChart3,
-  ShoppingCart,
-  DollarSign,
-  Users,
-  Package,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
-import {
-  useGetDashboardAnalyticsQuery,
-  useGetUserAnalyticsQuery,
-} from "@/store/features/analyticsApi";
 import { useCurrentUser } from "@/store/slices/authSlice";
+import { useGetAnalyticsSummaryQuery } from "@/store/features/analyticsApi";
 
 export default function AnalyticsPage() {
-
   const user = useSelector(useCurrentUser)?.user;
 
   const isAdmin = user?.role === "admin";
 
-  const { data: dashboardAnalytics, isLoading: dashboardLoading } =
-    useGetDashboardAnalyticsQuery(user?.role, { skip: !user?.role });
+  const { data: analyticsData, isLoading } = useGetAnalyticsSummaryQuery();
 
-  const { data: userAnalytics, isLoading: userLoading } =
-    useGetUserAnalyticsQuery(user?.id, { skip: !user?.id || isAdmin });
-
-  const analytics = isAdmin ? dashboardAnalytics : userAnalytics;
-  const loading = isAdmin ? dashboardLoading : userLoading;
-
-  // eslint-disable-next-line no-unused-vars
-  const getMetricIcon = (metric) => {
-    const icons = {
-      totalSales: DollarSign,
-      totalOrders: ShoppingCart,
-      totalProducts: Package,
-      totalUsers: Users,
-      totalPurchases: ShoppingCart,
-      orderCount: ShoppingCart,
-    };
-    return icons[metric] || BarChart3;
-  };
-
-  const getMetricColor = (trend) => {
-    return trend >= 0 ? "text-green-600" : "text-red-600";
-  };
-
-  const getMetricTrendIcon = (trend) => {
-    return trend >= 0 ? TrendingUp : TrendingDown;
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -91,60 +51,52 @@ export default function AnalyticsPage() {
     ? [
         {
           title: "Total Sales",
-          value: `$${analytics?.totalSales?.toLocaleString() || 1200}`,
-          description: "Total revenue this month",
-          trend: analytics?.salesTrend || 15,
+          value: `$${analyticsData?.data?.totalSell?.toLocaleString() || 0}`,
+          description: "Total revenue",
           icon: DollarSign,
         },
         {
           title: "Total Orders",
-          value: analytics?.totalOrders?.toLocaleString() || 8,
+          value: analyticsData?.data?.totalOrder?.toLocaleString() || 0,
           description: "Orders this month",
-          trend: analytics?.ordersTrend || 5,
           icon: ShoppingCart,
         },
         {
           title: "Total Products",
-          value: analytics?.totalProducts?.toLocaleString() || 18,
+          value: analyticsData?.data?.totalProduct?.toLocaleString() || 0,
           description: "Active products",
-          trend: analytics?.productsTrend || 2,
           icon: Package,
         },
         {
           title: "Total Users",
-          value: analytics?.totalUsers?.toLocaleString() || 2,
+          value: analyticsData?.data?.totalUser?.toLocaleString() || 0,
           description: "Registered users",
-          trend: analytics?.usersTrend || 1,
           icon: Users,
         },
       ]
     : [
         {
           title: "Total Purchases",
-          value: analytics?.totalPurchases?.toLocaleString() || 450,
+          value: analyticsData?.data?.totalSpent?.toLocaleString() || 0,
           description: "Your total purchases",
-          trend: analytics?.purchasesTrend || 5,
           icon: ShoppingCart,
         },
         {
           title: "Order Count",
-          value: analytics?.orderCount?.toLocaleString() || 5,
+          value: analyticsData?.data?.totalOrders?.toLocaleString() || 0,
           description: "Total orders placed",
-          trend: analytics?.orderTrend || 1,
           icon: ShoppingCart,
         },
         {
           title: "Total Spent",
-          value: `$${analytics?.totalSpent?.toLocaleString() || 450}`,
+          value: `$${analyticsData?.data?.totalSpent?.toLocaleString() || 0}`,
           description: "Total amount spent",
-          trend: analytics?.spentTrend || 5,
           icon: DollarSign,
         },
         {
           title: "Wishlist Items",
-          value: analytics?.wishlistCount?.toLocaleString() || 2,
+          value: 2,
           description: "Items in wishlist",
-          trend: analytics?.wishlistTrend || 1,
           icon: Package,
         },
       ];
@@ -162,7 +114,6 @@ export default function AnalyticsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
-          const TrendIcon = getMetricTrendIcon(metric.trend);
 
           return (
             <Card key={index}>
@@ -177,14 +128,14 @@ export default function AnalyticsPage() {
                 <p className="text-xs text-muted-foreground">
                   {metric.description}
                 </p>
-                <div
+                {/* <div
                   className={`flex items-center text-xs ${getMetricColor(
                     metric.trend
                   )} mt-2`}
                 >
                   <TrendIcon className="h-3 w-3 mr-1" />
                   {Math.abs(metric.trend)}% from last month
-                </div>
+                </div> */}
               </CardContent>
             </Card>
           );
@@ -213,15 +164,17 @@ export default function AnalyticsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {analytics?.topProducts?.slice(0, 5).map((product, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between"
-                  >
-                    <span className="text-sm">{product.name}</span>
-                    <Badge variant="outline">{product.sales} sold</Badge>
-                  </div>
-                )) || (
+                {analyticsData?.topProducts
+                  ?.slice(0, 5)
+                  .map((product, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between"
+                    >
+                      <span className="text-sm">{product.name}</span>
+                      <Badge variant="outline">{product.sales} sold</Badge>
+                    </div>
+                  )) || (
                   <div className="text-muted-foreground text-sm">
                     No data available
                   </div>
@@ -254,7 +207,7 @@ export default function AnalyticsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {analytics?.favoriteCategories
+                {analyticsData?.favoriteCategories
                   ?.slice(0, 5)
                   .map((category, index) => (
                     <div
