@@ -1,45 +1,60 @@
 import { toast } from "sonner";
-import { useState } from "react";
+import { debounce } from "lodash";
+import { useEffect, useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 import {
   AlertDialog,
+  AlertDialogTitle,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogContent,
+  AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 
 import {
   useGetCategoriesQuery,
   useDeleteCategoryMutation,
 } from "@/store/features/categoriesApi";
+
 import LoadingButton from "@/components/shared/loading-button";
 import DashboardHeader from "@/components/shared/dashboard-header";
 
 export default function CategoriesPage() {
   const navigate = useNavigate();
 
+  const limit = 10;
+
   const [page, setPage] = useState(1);
+
   const [search, setSearch] = useState("");
+
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const [categoryToDelete, setCategoryToDelete] = useState(null);
 
-  const { data: categoriesData, isLoading } = useGetCategoriesQuery({
-    page,
-    limit: 10,
-    search,
-  });
-
-  console.log("categoriesData: ", categoriesData);
+  const { data: categoriesData, isLoading } = useGetCategoriesQuery(
+    search !== "" ? { page, limit, search: debouncedSearch } : { page, limit }
+  );
 
   const [deleteCategory, { isLoading: deleting }] = useDeleteCategoryMutation();
+
+  useEffect(() => {
+    const handler = debounce((value) => {
+      setDebouncedSearch(value);
+    }, 500);
+
+    handler(search);
+
+    return () => {
+      handler.cancel();
+    };
+  }, [search]);
 
   // Function to open the confirmation dialog
   const confirmDeleteCategory = (id) => {
@@ -124,10 +139,10 @@ export default function CategoriesPage() {
   const pagination = categoriesData
     ? {
         currentPage: page,
-        totalPages: Math.ceil(categoriesData.total / 10),
+        totalPages: categoriesData?.meta?.totalPages,
         total: categoriesData.total,
         from: (page - 1) * 10 + 1,
-        to: Math.min(page * 10, categoriesData.total),
+        to: Math.min(page * 10, categoriesData?.meta?.total),
       }
     : null;
 

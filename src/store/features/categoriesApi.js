@@ -3,10 +3,16 @@ import { api } from "../services/api";
 export const categoriesApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getCategories: builder.query({
-      query: ({ page = 1, limit = 10, search = "" }) => ({
-        url: "/category/get-all-category",
-        params: { page, limit, search },
-      }),
+      query: ({ page = 1, limit = 10, search = "" }) => {
+        const params = { page, limit };
+        if (search !== "") {
+          params.search = search;
+        }
+        return {
+          url: "/category/get-all-category",
+          params,
+        };
+      },
       providesTags: (result) =>
         result
           ? [
@@ -53,8 +59,8 @@ export const categoriesApi = api.injectEndpoints({
 });
 
 export const {
-  useGetCategoriesQuery,
   useGetCategoryQuery,
+  useGetCategoriesQuery,
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,

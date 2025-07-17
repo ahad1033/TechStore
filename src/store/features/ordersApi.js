@@ -3,10 +3,13 @@ import { api } from "../services/api";
 export const ordersApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getOrders: builder.query({
-      query: ({ page = 1, limit = 10, search = "" }) => ({
-        url: "/orders/get-orders",
-        params: { page, limit, search },
-      }),
+      query: ({ page = 1, limit = 10, search = "" }) => {
+        const params = { page, limit };
+        if (search !== "") {
+          params.search = search;
+        }
+        return { url: "/orders/get-orders", params };
+      },
 
       providesTags: (result) =>
         result

@@ -1,7 +1,7 @@
 import { setUser } from "../slices/authSlice";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const mode = "prod";
+const mode = "development";
 
 const baseURL =
   mode === "development"
@@ -53,30 +53,3 @@ export const api = createApi({
   baseQuery: baseQueryWithRefreshToken,
   endpoints: () => ({}),
 });
-
-// Create the base API service
-// export const api = createApi({
-//   reducerPath: "api",
-//   baseQuery: fetchBaseQuery({
-//     baseUrl: "http://localhost:5000//api/v1",
-//     prepareHeaders: (headers, { getState }) => {
-//       // Get token from auth state
-//       const token = getState().auth.user?.token;
-//       if (token) {
-//         headers.set("authorization", `Bearer ${token}`);
-//       }
-//       return headers;
-//     },
-//   }),
-//   tagTypes: [
-//     "Category",
-//     "Subcategory",
-//     "Product",
-//     "Order",
-//     "User",
-//     "Analytics",
-//   ],
-//   endpoints: () => ({}),
-// });
-
-// export default api;

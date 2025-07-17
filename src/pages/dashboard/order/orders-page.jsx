@@ -45,11 +45,7 @@ export default function OrdersPage() {
   }, [search]);
 
   const { data: ordersData, isLoading } = useGetOrdersQuery(
-    {
-      page,
-      limit,
-      search: debouncedSearch,
-    },
+    search !== "" ? { page, limit, search: debouncedSearch } : { page, limit },
     {
       refetchOnFocus: false,
       refetchOnReconnect: false,
