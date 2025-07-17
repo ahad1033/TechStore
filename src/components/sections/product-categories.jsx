@@ -71,13 +71,10 @@ const ProductCategories = () => {
                     </div>
 
                     {/* Category Info - Hidden on Mobile */}
-                    <div className="p-6 hidden lg:block">
+                    <div className="px-6 pb-3  hidden lg:flex justify-between align-center">
                       <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors duration-200">
                         {category.name}
                       </h3>
-                      <p className="text-gray-600 text-sm mb-4">
-                        {category.description}
-                      </p>
 
                       {/* View More Link */}
                       <div className="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform duration-200">

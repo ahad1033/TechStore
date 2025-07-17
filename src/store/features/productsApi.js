@@ -9,10 +9,20 @@ export const productsApi = api.injectEndpoints({
         search = "",
         categoryId,
         subcategoryId,
-      }) => ({
-        url: "/products/get-all-product",
-        params: { page, limit, search, categoryId, subcategoryId },
-      }),
+      }) => {
+        const params = { page, limit };
+        if (search !== "") {
+          params.search = search;
+        }
+        if (categoryId !== "") {
+          params.categoryId = categoryId;
+        }
+        if (subcategoryId !== "") {
+          params.subcategoryId = subcategoryId;
+        }
+
+        return { url: "/products/get-all-product", params };
+      },
       providesTags: (result) =>
         result
           ? [

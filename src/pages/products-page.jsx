@@ -1,6 +1,6 @@
 import { toast } from "sonner";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   Eye,
@@ -27,6 +27,8 @@ import { ServicesSection } from "@/components/sections";
 const ProductsPage = () => {
   const dispatch = useDispatch();
 
+  const [searchParams] = useSearchParams();
+
   const [viewMode, setViewMode] = useState("grid");
 
   const [page, setPage] = useState(1);
@@ -42,7 +44,7 @@ const ProductsPage = () => {
 
   const {
     data: products,
-    isLoading,
+    isLoading: productLoading,
     isFetching,
   } = useGetProductsQuery({
     page,
@@ -51,7 +53,24 @@ const ProductsPage = () => {
     categoryId: filters.category,
   });
 
-  const { data: categories } = useGetCategoriesQuery({ page: 1, limit: 50 });
+  const { data: categories, isLoading: categoryLoading } =
+    useGetCategoriesQuery({ page: 1, limit: 50 });
+
+  const loading = productLoading || categoryLoading || isFetching;
+
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get("category");
+    if (categoryFromUrl && categories) {
+      const categoryId = categories?.data?.find(
+        (c) => c.name.toLowerCase() === categoryFromUrl
+      )?.id;
+
+      setFilters((prev) => ({
+        ...prev,
+        category: categoryId,
+      }));
+    }
+  }, [categories, searchParams]);
 
   // const priceRanges = [
   //   "All",
@@ -225,7 +244,7 @@ const ProductsPage = () => {
                   : "grid-cols-1"
               }`}
             >
-              {isLoading || isFetching
+              {loading
                 ? Array.from({ length: 10 }).map((_, index) => (
                     <FeaturedProductSkeletonCard key={index} />
                   ))
