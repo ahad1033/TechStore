@@ -11,6 +11,8 @@ import { DashboardLayout } from "@/components/layouts";
 
 import AboutUs from "@/pages/about-us";
 import CheckoutPage from "@/pages/checkout-page";
+import ProfilePage from "@/pages/dashboard/profile-page";
+import OrdersPage from "@/pages/dashboard/order/orders-page";
 import AnalyticsPage from "@/pages/dashboard/analytics-page";
 import MainLayout from "@/components/layouts/main-layout.jsx";
 import ProtectedRoute from "@/components/guard/protected-route";
@@ -19,7 +21,6 @@ import CategoryForm from "@/pages/dashboard/category/category-form";
 import DProductsPage from "@/pages/dashboard/product/products-page";
 import SubcategoriesPage from "@/pages/dashboard/subcategories-page";
 import CategoriesPage from "@/pages/dashboard/category/categories-page";
-import OrdersPage from "@/pages/dashboard/order/orders-page";
 
 export const routes = [
   {
@@ -150,6 +151,14 @@ export const routes = [
         element: (
           <ProtectedRoute>
             <OrdersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         ),
       },

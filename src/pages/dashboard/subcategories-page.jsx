@@ -1,9 +1,12 @@
-import React, { useState } from "react";
 import * as yup from "yup";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Edit, Trash2 } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 import FormModal from "@/components/ui/form-modal";
+
 import {
   useGetSubcategoriesQuery,
   useCreateSubcategoryMutation,
@@ -11,7 +14,6 @@ import {
   useDeleteSubcategoryMutation,
 } from "@/store/features/subcategoriesApi";
 import { useGetCategoriesQuery } from "@/store/features/categoriesApi";
-import { Edit, Trash2, Eye } from "lucide-react";
 
 const subcategorySchema = yup.object({
   name: yup

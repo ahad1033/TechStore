@@ -65,7 +65,7 @@ export default function DashboardLayout() {
 
   const user = useSelector(useCurrentUser)?.user;
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const isAdmin = user?.role === "admin";
 
@@ -91,7 +91,7 @@ export default function DashboardLayout() {
   const handleNavigation = (path) => {
     navigate(path);
     if (window.innerWidth < 1024) {
-      setIsSidebarOpen(false);
+      setIsCollapsed(false);
     }
   };
 
@@ -101,16 +101,18 @@ export default function DashboardLayout() {
         className="border-r"
         collapsible="icon"
         variant="inset"
-        collapsed={!isSidebarOpen}
-        onCollapsedChange={setIsSidebarOpen}
+        // collapsed={!isCollapsed}
+        // onCollapsedChange={setIsCollapsed}
       >
         <SidebarHeader className="border-b p-4">
           <Link to="/">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Package className="w-4 h-4 text-primary-foreground" />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+                <img src="/t-icon.png" />
               </div>
-              <span className="font-semibold text-lg">TechStore</span>
+              {isCollapsed && (
+                <span className="font-semibold text-lg">TechStore</span>
+              )}
             </div>
           </Link>
         </SidebarHeader>
