@@ -21,6 +21,7 @@ import CategoryForm from "@/pages/dashboard/category/category-form";
 import DProductsPage from "@/pages/dashboard/product/products-page";
 import SubcategoriesPage from "@/pages/dashboard/subcategories-page";
 import CategoriesPage from "@/pages/dashboard/category/categories-page";
+import SubscribersPage from "@/pages/dashboard/subscriber/subscribers-page";
 
 export const routes = [
   {
@@ -151,6 +152,14 @@ export const routes = [
         element: (
           <ProtectedRoute>
             <OrdersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "subscribers",
+        element: (
+          <ProtectedRoute>
+            <SubscribersPage />
           </ProtectedRoute>
         ),
       },

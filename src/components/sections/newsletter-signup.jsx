@@ -8,31 +8,46 @@ import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
+import { useCreateSubscriberMutation } from "@/store/features/subscribersApi";
+
 const NewsletterSignup = () => {
   const [email, setEmail] = useState("");
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subscribe, { isLoading }] = useCreateSubscriberMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email) return;
+    if (email === "") {
+      toast.error("Please enter your email address!");
+      return;
+    }
 
-    setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+      const dataToSend = {
+        email,
+      };
+      const res = await subscribe(dataToSend).unwrap();
 
-    toast.success(
-      `Thanks for signing up with ${email} to get our latest updates!`
-    );
+      if (res.success) {
+        toast.success(
+          res.message ||
+            `Thanks for signing up with ${email} to get our latest updates!`
+        );
 
-    setEmail("");
-    setIsSubmitting(false);
+        setEmail("");
+      }
+    } catch (error) {
+      console.log("error: ", error);
+      toast.error(error.message);
+    }
   };
 
   // Animation variants for the bouncing effect
   const bounceAnimation = {
-    y: [0, -20, 0],
+    y: [0, -25, 0],
     transition: {
       duration: 2,
       repeat: Infinity,
@@ -139,10 +154,10 @@ const NewsletterSignup = () => {
                     >
                       <Button
                         type="submit"
-                        disabled={isSubmitting || !email}
+                        disabled={isLoading || !email}
                         className="w-full bg-white text-primary hover:bg-gray-100 disabled:opacity-50 h-12 lg:h-14 text-base lg:text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                       >
-                        {isSubmitting ? (
+                        {isLoading ? (
                           <motion.div
                             animate={{ rotate: 360 }}
                             transition={{

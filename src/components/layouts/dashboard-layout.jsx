@@ -3,53 +3,56 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
 import {
-  BarChart3,
-  Package,
-  ShoppingCart,
-  Users,
-  LogOut,
+  Box,
   User,
+  Users,
   Heart,
+  LogOut,
+  Combine,
+  BarChart3,
+  ShoppingCart,
 } from "lucide-react";
 
-import { logout, useCurrentUser } from "@/store/slices/authSlice";
+import useBoolean from "@/hooks/use-boolean";
+
 import {
   Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarInset,
   SidebarMenu,
-  SidebarMenuButton,
+  SidebarInset,
+  SidebarHeader,
+  SidebarContent,
+  SidebarTrigger,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger,
+  SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import useBoolean from "@/hooks/use-boolean";
 import { ThemeToggle } from "../theme/theme-toggle";
+import { logout, useCurrentUser } from "@/store/slices/authSlice";
 
 const adminMenuItems = [
   { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
-  { icon: Package, label: "Categories", path: "/dashboard/categories" },
+  { icon: Combine, label: "Categories", path: "/dashboard/categories" },
   // { icon: Package, label: "Subcategories", path: "/dashboard/subcategories" },
   { icon: ShoppingCart, label: "Products", path: "/dashboard/products" },
-  { icon: Users, label: "Orders", path: "/dashboard/orders" },
+  { icon: Box, label: "Orders", path: "/dashboard/orders" },
+  { icon: Users, label: "Subscribers", path: "/dashboard/subscribers" },
+  { icon: User, label: "Profile", path: "/dashboard/profile" },
 ];
 
 const userMenuItems = [
   { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
-  { icon: ShoppingCart, label: "Orders", path: "/dashboard/orders" },
+  { icon: Box, label: "Orders", path: "/dashboard/orders" },
   { icon: Heart, label: "Wishlist", path: "/dashboard/wishlist" },
   { icon: User, label: "Profile", path: "/dashboard/profile" },
 ];

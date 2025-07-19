@@ -59,6 +59,7 @@ export default function DataTable({
       inactive: { variant: "secondary", label: "Inactive" },
       pending: { variant: "info", label: "Pending" },
       completed: { variant: "green", label: "Completed" },
+      approved: { variant: "green", label: "Approved" },
       cancelled: { variant: "destructive", label: "Cancelled" },
       processing: { variant: "yellow", label: "Processing" },
     };
