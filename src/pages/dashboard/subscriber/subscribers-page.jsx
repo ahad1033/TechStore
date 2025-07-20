@@ -17,8 +17,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 
-import { useGetSubscribersQuery } from "@/store/features/subscribersApi";
-import { useDeleteCategoryMutation } from "@/store/features/categoriesApi";
+import {
+  useGetSubscribersQuery,
+  useDeleteSubscriberMutation,
+} from "@/store/features/subscribersApi";
 
 import LoadingButton from "@/components/shared/loading-button";
 import DashboardHeader from "@/components/shared/dashboard-header";
@@ -32,13 +34,14 @@ export default function SubscribersPage() {
 
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [subscriberToDelete, setSubscriberToDelete] = useState(null);
 
   const { data: subscribersData, isLoading } = useGetSubscribersQuery(
     search !== "" ? { page, limit, search: debouncedSearch } : { page, limit }
   );
 
-  const [deleteCategory, { isLoading: deleting }] = useDeleteCategoryMutation();
+  const [deleteSubscriber, { isLoading: deleting }] =
+    useDeleteSubscriberMutation();
 
   useEffect(() => {
     const handler = debounce((value) => {
@@ -53,28 +56,29 @@ export default function SubscribersPage() {
   }, [search]);
 
   // Function to open the confirmation dialog
-  const confirmDeleteCategory = (id) => {
-    setCategoryToDelete(id);
+  const confirmDeleteSubscriber = (id) => {
+    console.log(`clicked for ${id}`);
+    setSubscriberToDelete(id);
   };
 
-  const handleDeleteCategory = async () => {
-    if (!categoryToDelete) return;
+  const handleDeleteSubscriber = async () => {
+    if (!subscriberToDelete) return;
 
     toast.info("Wait a moment!");
 
     try {
-      const res = await deleteCategory(categoryToDelete).unwrap();
+      const res = await deleteSubscriber(subscriberToDelete).unwrap();
 
       if (res.success) {
         await new Promise((resolve) => setTimeout(resolve, 300));
 
-        toast.success(res.message || "Category deleted successfully!");
+        toast.success(res.message || "Subscriber deleted successfully!");
 
-        setCategoryToDelete(null);
+        setSubscriberToDelete(null);
       }
     } catch (error) {
-      console.error("Failed to delete category:", error);
-      toast.error("Failed to delete category. Please try again.");
+      console.error("Failed to delete subscriber:", error);
+      toast.error("Failed to delete subscriber! Please try again.");
     }
   };
 
@@ -95,7 +99,7 @@ export default function SubscribersPage() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => confirmDeleteCategory(row.id)}
+          onClick={() => confirmDeleteSubscriber(row._id)}
           disabled={deleting}
         >
           <Trash2 className="h-4 w-4" />
@@ -138,26 +142,23 @@ export default function SubscribersPage() {
 
       {/* AlertDialog for Delete Confirmation */}
       <AlertDialog
-        open={Boolean(categoryToDelete)}
-        onOpenChange={(open) => !open && setCategoryToDelete(null)}
+        open={Boolean(subscriberToDelete)}
+        onOpenChange={(open) => !open && setSubscriberToDelete(null)}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              selected category.
-              <br />
               <span className="font-bold text-red-600">
-                Warning: If this category has any subcategories, they will also
-                be permanently deleted.
+                This action cannot be undone. This will permanently the
+                subscriber.
               </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteCategory}
+              onClick={handleDeleteSubscriber}
               disabled={deleting}
             >
               {deleting ? <LoadingButton /> : "Delete"}

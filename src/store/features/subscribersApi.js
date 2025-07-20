@@ -28,8 +28,19 @@ export const subscribersApi = api.injectEndpoints({
       }),
       invalidatesTags: [{ type: "Subscriber", id: "LIST" }],
     }),
+
+    deleteSubscriber: builder.mutation({
+      query: (id) => ({
+        url: `/subscribers/delete-subscriber/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "Subscriber", id: "LIST" }],
+    }),
   }),
 });
 
-export const { useCreateSubscriberMutation, useGetSubscribersQuery } =
-  subscribersApi;
+export const {
+  useGetSubscribersQuery,
+  useCreateSubscriberMutation,
+  useDeleteSubscriberMutation,
+} = subscribersApi;

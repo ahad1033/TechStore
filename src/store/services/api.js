@@ -1,7 +1,7 @@
 import { setUser } from "../slices/authSlice";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const mode = "prod";
+const mode = "PROD";
 
 const baseURL =
   mode === "development"
