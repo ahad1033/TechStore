@@ -4,6 +4,12 @@ import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+} from "@/components/ui/dropdown-menu";
+import {
   AlertDialog,
   AlertDialogTitle,
   AlertDialogAction,
@@ -20,6 +26,7 @@ import DataTable from "@/components/ui/data-table";
 import {
   useGetSubscribersQuery,
   useDeleteSubscriberMutation,
+  useUpdateSubscriberStatusMutation,
 } from "@/store/features/subscribersApi";
 
 import LoadingButton from "@/components/shared/loading-button";
@@ -43,6 +50,8 @@ export default function SubscribersPage() {
   const [deleteSubscriber, { isLoading: deleting }] =
     useDeleteSubscriberMutation();
 
+  const [updateSubscriber] = useUpdateSubscriberStatusMutation();
+
   useEffect(() => {
     const handler = debounce((value) => {
       setDebouncedSearch(value);
@@ -57,7 +66,6 @@ export default function SubscribersPage() {
 
   // Function to open the confirmation dialog
   const confirmDeleteSubscriber = (id) => {
-    console.log(`clicked for ${id}`);
     setSubscriberToDelete(id);
   };
 
@@ -82,16 +90,89 @@ export default function SubscribersPage() {
     }
   };
 
+  const handleStatusChange = async (id, newStatus) => {
+    toast.warning("Wait a moment!");
+
+    try {
+      const dataToSend = {
+        status: newStatus,
+      };
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      const res = await updateSubscriber({ id, data: dataToSend }).unwrap();
+
+      if (res.success) {
+        toast.success(res.message || "Status updated successfully!");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const getStatusBadge = (status, subscriberId) => {
+    const lowerStatus = status?.toLowerCase();
+
+    const statusConfig = {
+      pending: { variant: "yellow", label: "Pending" },
+      approved: { variant: "green", label: "Approved" },
+      cancelled: { variant: "destructive", label: "Cancelled" },
+    };
+
+    const config = statusConfig[lowerStatus] || {
+      variant: "secondary",
+      label: status,
+    };
+
+    // Define which options to show based on status
+    const options = [];
+
+    if (lowerStatus === "pending") {
+      options.push(
+        { label: "Approve", value: "approved" },
+        { label: "Cancel", value: "cancelled" }
+      );
+    } else if (lowerStatus === "approved") {
+      options.push({ label: "Cancel", value: "cancelled" });
+    } else if (lowerStatus === "cancelled") {
+      options.push({ label: "Approve", value: "approved" });
+    }
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Badge
+            variant={config.variant}
+            className="cursor-pointer hover:opacity-80"
+          >
+            {config.label}
+          </Badge>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          {options.map((option) => (
+            <DropdownMenuItem
+              key={option.value}
+              onClick={() => handleStatusChange(subscriberId, option.value)}
+            >
+              {option.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
+
   const columns = [
     {
       key: "email",
       label: "Email",
     },
-    // {
-    //   key: "status",
-    //   label: "Status",
-    //   type: "status",
-    // },
+    {
+      key: "status",
+      label: "Status",
+      render: (value, row) => getStatusBadge(value, row._id),
+    },
     {
       key: "actions",
       label: "Actions",

@@ -29,6 +29,18 @@ export const subscribersApi = api.injectEndpoints({
       invalidatesTags: [{ type: "Subscriber", id: "LIST" }],
     }),
 
+    updateSubscriberStatus: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/subscribers/update-status/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Subscriber", id },
+        { type: "Subscriber", id: "LIST" },
+      ],
+    }),
+
     deleteSubscriber: builder.mutation({
       query: (id) => ({
         url: `/subscribers/delete-subscriber/${id}`,
@@ -43,4 +55,5 @@ export const {
   useGetSubscribersQuery,
   useCreateSubscriberMutation,
   useDeleteSubscriberMutation,
+  useUpdateSubscriberStatusMutation,
 } = subscribersApi;
