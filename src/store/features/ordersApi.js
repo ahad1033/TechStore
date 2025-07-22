@@ -45,6 +45,18 @@ export const ordersApi = api.injectEndpoints({
         { type: "Order", id: "LIST" },
       ],
     }),
+
+    updateOrderStatus: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/orders/update-status/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Order", id },
+        { type: "Order", id: "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -53,4 +65,5 @@ export const {
   // useGetOrderQuery,
   useUpdateOrderMutation,
   useCreateOrderMutation,
+  useUpdateOrderStatusMutation,
 } = ordersApi;
